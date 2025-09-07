@@ -1,0 +1,37 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import { ViewDisplay } from '../../../components/ViewDisplay';
+import { getViewsForRepo, mockRepositories } from '../../../data/mockData';
+
+export function getStaticPaths() {
+  // Generate paths for all known repositories
+  return mockRepositories.map(repo => {
+    const [owner, name] = repo.id.split('/');
+    return {
+      params: { owner, name },
+      props: { repo }
+    };
+  });
+}
+
+const { owner, name } = Astro.params;
+const repoId = `${owner}/${name}`;
+
+// In production, fetch from API
+const manifest = getViewsForRepo(repoId);
+
+if (!manifest) {
+  return Astro.redirect('/404');
+}
+
+// For client-side navigation back
+const backUrl = '/';
+---
+
+<Layout title={`${repoId} - Alexandria`}>
+  <ViewDisplay 
+    manifest={manifest} 
+    client:load 
+    backUrl={backUrl}
+  />
+</Layout>
