@@ -9,8 +9,8 @@ export function Alexandria() {
   const [searchOpen, setSearchOpen] = useState(false);
 
   const handleRepoSelect = (repo: Repository) => {
-    // Navigate to the repository page
-    window.location.href = `/repo/${repo.id}`;
+    // Navigate to the repository page with base path
+    window.location.href = `/alexandria/repo/${repo.id}`;
   };
 
   // For now, show all repos

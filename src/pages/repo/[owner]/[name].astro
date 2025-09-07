@@ -24,8 +24,8 @@ if (!manifest) {
   return Astro.redirect('/404');
 }
 
-// For client-side navigation back
-const backUrl = '/';
+// For client-side navigation back with base path
+const backUrl = '/alexandria/';
 ---
 
 <Layout title={`${repoId} - Alexandria`}>
