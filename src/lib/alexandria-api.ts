@@ -3,6 +3,8 @@
  * Handles all communication with the Alexandria backend API
  */
 
+import type { CodebaseViewSummary } from 'a24z-memory';
+
 export interface Repository {
   id: string;
   owner: string;
@@ -11,7 +13,7 @@ export interface Repository {
   stars: number;
   hasViews: boolean;
   viewCount: number;
-  views: CodebaseView[];
+  views: CodebaseViewSummary[];
   lastUpdated: string;
   tags?: string[];
   metadata?: {
@@ -23,18 +25,6 @@ export interface Repository {
   };
   registeredAt?: string;
   lastChecked?: string;
-}
-
-export interface CodebaseView {
-  id: string;
-  name: string;  // Changed from title
-  description?: string;
-  overviewPath: string;  // Changed from docPath
-  cellCount?: number;
-  gridSize?: [number, number];
-  tags?: string[];
-  type?: 'guide' | 'reference' | 'tutorial' | 'explanation';
-  lastUpdated?: string;
 }
 
 export interface RepositoriesResponse {
@@ -59,7 +49,7 @@ export interface RegisterRepositoryResponse {
     message: string;
     hasViews: boolean;
     viewCount: number;
-    views: CodebaseView[];
+    views: CodebaseViewSummary[];
   };
 }
 

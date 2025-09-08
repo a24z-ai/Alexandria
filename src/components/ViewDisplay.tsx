@@ -3,13 +3,13 @@ import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/ca
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import type { CodebaseView } from '@/lib/alexandria-api';
+import type { CodebaseViewSummary } from 'a24z-memory';
 import { AlexandriaAPI } from '@/lib/alexandria-api';
 
 interface ViewsManifest {
   version: string;
   repository: string;
-  views: CodebaseView[];
+  views: CodebaseViewSummary[];
 }
 
 interface ViewDisplayProps {
@@ -19,7 +19,7 @@ interface ViewDisplayProps {
 }
 
 export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
-  const [selectedView, setSelectedView] = useState<CodebaseView | null>(null);
+  const [selectedView, setSelectedView] = useState<CodebaseViewSummary | null>(null);
   const [markdownContent, setMarkdownContent] = useState<string>('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -52,11 +52,11 @@ export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
   }, [selectedView, manifest.repository]);
 
   const groupedViews = manifest.views.reduce((acc, view) => {
-    const type = view.type || 'other';
-    if (!acc[type]) acc[type] = [];
-    acc[type].push(view);
+    const category = view.category || 'other';
+    if (!acc[category]) acc[category] = [];
+    acc[category].push(view);
     return acc;
-  }, {} as Record<string, CodebaseView[]>);
+  }, {} as Record<string, CodebaseViewSummary[]>);
 
   return (
     <div className="h-full flex flex-col">
@@ -92,19 +92,19 @@ export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
           <ScrollArea className="h-full">
             <Tabs defaultValue={Object.keys(groupedViews)[0]} className="w-full">
               <TabsList className="w-full justify-start rounded-none border-b h-auto p-0">
-                {Object.keys(groupedViews).map(type => (
+                {Object.keys(groupedViews).map(category => (
                   <TabsTrigger 
-                    key={type}
-                    value={type}
+                    key={category}
+                    value={category}
                     className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary"
                   >
-                    {type.charAt(0).toUpperCase() + type.slice(1)}
+                    {category.charAt(0).toUpperCase() + category.slice(1)}
                   </TabsTrigger>
                 ))}
               </TabsList>
               
-              {Object.entries(groupedViews).map(([type, views]) => (
-                <TabsContent key={type} value={type} className="mt-0 p-4">
+              {Object.entries(groupedViews).map(([category, views]) => (
+                <TabsContent key={category} value={category} className="mt-0 p-4">
                   <div className="space-y-2">
                     {views.map(view => (
                       <Card
@@ -121,13 +121,6 @@ export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
                               {view.description}
                             </CardDescription>
                           )}
-                          <div className="flex gap-1 mt-2 flex-wrap">
-                            {view.tags?.map(tag => (
-                              <Badge key={tag} variant="outline" className="text-xs">
-                                {tag}
-                              </Badge>
-                            ))}
-                          </div>
                         </CardHeader>
                       </Card>
                     ))}

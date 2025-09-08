@@ -32,9 +32,6 @@ export function Alexandria() {
         data.repositories.forEach(repo => {
           viewCount += repo.viewCount;
           repo.tags?.forEach(tag => tags.add(tag));
-          repo.views?.forEach(view => {
-            view.tags?.forEach(tag => tags.add(tag));
-          });
         });
         
         setTotalViews(viewCount);
