@@ -36,7 +36,7 @@ export function Alexandria() {
 
   const handleRepoSelect = (repo: Repository) => {
     // Navigate to the repository page with query params
-    window.location.href = `/alexandria/repo?owner=${repo.owner}&name=${repo.name}`;
+    window.location.href = `/Alexandria/repo?owner=${repo.owner}&name=${repo.name}`;
   };
 
   // Keyboard shortcut for search (only when more than 15 repos)

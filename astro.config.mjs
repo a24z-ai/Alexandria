@@ -14,7 +14,7 @@ export default defineConfig({
   
   // For GitHub Pages deployment
   site: 'https://a24z-ai.github.io',
-  base: '/alexandria',
+  base: '/Alexandria',
   
   // For Vercel, Netlify, Cloudflare - no changes needed
   // They auto-detect Astro projects

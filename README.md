@@ -1,10 +1,10 @@
 # Alexandria by a24z
 
-> 📚 Library of codebase views and documentation
+> 📚 Library of Codebase Views
 
 Alexandria is a centralized platform for discovering and browsing a24z-memory documentation across GitHub repositories. It provides a beautiful, searchable interface for exploring technical documentation, architectural decisions, and development patterns.
 
-🌐 **Live Site**: [https://a24z-ai.github.io/alexandria](https://a24z-ai.github.io/alexandria)
+🌐 **Live Site**: [https://a24z-ai.github.io/Alexandria](https://a24z-ai.github.io/Alexandria)
 
 ## Features
 
@@ -18,7 +18,7 @@ Alexandria is a centralized platform for discovering and browsing a24z-memory do
 ## Project Structure
 
 ```
-alexandria/
+Alexandria/
 ├── src/
 │   ├── components/         # React components
 │   │   ├── Alexandria.tsx  # Main app component
@@ -55,8 +55,8 @@ alexandria/
 
 ```bash
 # Clone the repository
-git clone https://github.com/a24z-ai/alexandria.git
-cd alexandria
+git clone https://github.com/a24z-ai/Alexandria.git
+cd Alexandria
 
 # Install dependencies
 bun install
