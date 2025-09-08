@@ -7,7 +7,7 @@ const { title } = Astro.props;
 ---
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="description" content="a24z Alexandria - Library of Views and Documentation" />
@@ -15,6 +15,11 @@ const { title } = Astro.props;
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
+    <script is:inline>
+      // Check for saved theme preference or default to 'dark'
+      const theme = localStorage.getItem('theme') || 'dark';
+      document.documentElement.className = theme;
+    </script>
   </head>
   <body>
     <slot />

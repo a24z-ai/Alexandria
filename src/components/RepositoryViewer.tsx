@@ -44,7 +44,7 @@ export function RepositoryViewer({ backUrl }: RepositoryViewerProps) {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="h-screen flex items-center justify-center">
         <div className="text-muted-foreground">Loading repository...</div>
       </div>
     );
@@ -52,7 +52,7 @@ export function RepositoryViewer({ backUrl }: RepositoryViewerProps) {
 
   if (error || !repository) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="h-screen flex items-center justify-center">
         <div className="text-center">
           <p className="text-red-500 mb-4">Error: {error || 'Repository not found'}</p>
           <a href={backUrl} className="text-primary hover:underline">

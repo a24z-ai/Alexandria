@@ -5,6 +5,122 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import type { CodebaseViewSummary } from 'a24z-memory';
 import { AlexandriaAPI } from '@/lib/alexandria-api';
+import { ThemeToggle } from './ThemeToggle';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import rehypeHighlight from 'rehype-highlight';
+import rehypeRaw from 'rehype-raw';
+import type { Components } from 'react-markdown';
+
+// Custom components for markdown rendering
+const markdownComponents: Components = {
+  h1: ({ children }) => (
+    <h1 className="text-4xl font-bold mb-6 mt-2 text-gray-200 dark:text-gray-200">
+      {children}
+    </h1>
+  ),
+  h2: ({ children }) => (
+    <h2 className="text-3xl font-semibold mb-4 mt-8 text-gray-200 dark:text-gray-200">
+      {children}
+    </h2>
+  ),
+  h3: ({ children }) => (
+    <h3 className="text-2xl font-semibold mb-3 mt-6 text-gray-300 dark:text-gray-300">
+      {children}
+    </h3>
+  ),
+  h4: ({ children }) => (
+    <h4 className="text-xl font-semibold mb-2 mt-4 text-gray-300 dark:text-gray-300">
+      {children}
+    </h4>
+  ),
+  p: ({ children }) => (
+    <p className="mb-4 leading-7 text-gray-400 dark:text-gray-400">
+      {children}
+    </p>
+  ),
+  a: ({ href, children }) => (
+    <a 
+      href={href}
+      className="text-blue-500 dark:text-blue-400 hover:underline font-medium"
+      target={href?.startsWith('http') ? '_blank' : undefined}
+      rel={href?.startsWith('http') ? 'noopener noreferrer' : undefined}
+    >
+      {children}
+    </a>
+  ),
+  ul: ({ children }) => (
+    <ul className="list-disc pl-6 mb-4 space-y-2">
+      {children}
+    </ul>
+  ),
+  ol: ({ children }) => (
+    <ol className="list-decimal pl-6 mb-4 space-y-2">
+      {children}
+    </ol>
+  ),
+  li: ({ children }) => (
+    <li className="text-gray-400 dark:text-gray-400">
+      {children}
+    </li>
+  ),
+  blockquote: ({ children }) => (
+    <blockquote className="border-l-4 border-gray-600 pl-4 py-2 my-4 italic text-gray-500 dark:text-gray-500">
+      {children}
+    </blockquote>
+  ),
+  code: ({ inline, className, children }) => {
+    if (inline) {
+      return (
+        <code className="bg-zinc-800 px-1.5 py-0.5 rounded text-sm font-mono text-gray-300">
+          {children}
+        </code>
+      );
+    }
+    return (
+      <code className={className}>
+        {children}
+      </code>
+    );
+  },
+  pre: ({ children }) => (
+    <pre className="bg-zinc-900 dark:bg-zinc-950 p-4 rounded-lg overflow-x-auto mb-4 border border-border">
+      {children}
+    </pre>
+  ),
+  table: ({ children }) => (
+    <div className="overflow-x-auto mb-4">
+      <table className="w-full border-collapse">
+        {children}
+      </table>
+    </div>
+  ),
+  thead: ({ children }) => (
+    <thead className="bg-muted">
+      {children}
+    </thead>
+  ),
+  th: ({ children }) => (
+    <th className="border border-zinc-700 px-4 py-2 text-left font-semibold text-gray-300">
+      {children}
+    </th>
+  ),
+  td: ({ children }) => (
+    <td className="border border-zinc-700 px-4 py-2 text-gray-400">
+      {children}
+    </td>
+  ),
+  hr: () => (
+    <hr className="my-8 border-zinc-700" />
+  ),
+  img: ({ src, alt }) => (
+    <img 
+      src={src} 
+      alt={alt} 
+      className="rounded-lg my-4 max-w-full h-auto"
+    />
+  ),
+};
 
 interface ViewsManifest {
   version: string;
@@ -59,80 +175,108 @@ export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
   }, {} as Record<string, CodebaseViewSummary[]>);
 
   return (
-    <div className="h-full flex flex-col">
-      <div className="border-b px-6 py-4 flex items-center justify-between">
+    <div className="h-screen flex flex-col">
+      <div className="border-b px-6 py-4 flex items-center justify-between flex-shrink-0">
         <div>
           <h1 className="text-2xl font-bold">{manifest.repository}</h1>
           <p className="text-sm text-muted-foreground mt-1">
             {manifest.views.length} views available
           </p>
         </div>
-        {(onBack || backUrl) && (
-          onBack ? (
-            <button
-              onClick={onBack}
-              className="text-sm text-muted-foreground hover:text-foreground"
-            >
-              ← Back to repositories
-            </button>
-          ) : (
-            <a
-              href={backUrl}
-              className="text-sm text-muted-foreground hover:text-foreground"
-            >
-              ← Back to repositories
-            </a>
-          )
-        )}
+        <div className="flex items-center gap-2">
+          {(onBack || backUrl) && (
+            onBack ? (
+              <button
+                onClick={onBack}
+                className="text-sm text-muted-foreground hover:text-foreground"
+              >
+                ← Back to repositories
+              </button>
+            ) : (
+              <a
+                href={backUrl}
+                className="text-sm text-muted-foreground hover:text-foreground"
+              >
+                ← Back to repositories
+              </a>
+            )
+          )}
+          <ThemeToggle />
+        </div>
       </div>
 
-      <div className="flex-1 flex">
+      <div className="flex-1 flex overflow-hidden">
         {/* Sidebar with views */}
-        <div className="w-80 border-r">
-          <ScrollArea className="h-full">
-            <Tabs defaultValue={Object.keys(groupedViews)[0]} className="w-full">
-              <TabsList className="w-full justify-start rounded-none border-b h-auto p-0">
-                {Object.keys(groupedViews).map(category => (
-                  <TabsTrigger 
-                    key={category}
-                    value={category}
-                    className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary"
-                  >
-                    {category.charAt(0).toUpperCase() + category.slice(1)}
-                  </TabsTrigger>
+        <div className="w-80 border-r flex flex-col">
+          <ScrollArea className="flex-1">
+            {Object.keys(groupedViews).length > 1 ? (
+              <Tabs defaultValue={Object.keys(groupedViews)[0]} className="w-full">
+                <TabsList className="w-full justify-start rounded-none border-b h-auto p-0">
+                  {Object.keys(groupedViews).map(category => (
+                    <TabsTrigger 
+                      key={category}
+                      value={category}
+                      className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary"
+                    >
+                      {category.charAt(0).toUpperCase() + category.slice(1)}
+                    </TabsTrigger>
+                  ))}
+                </TabsList>
+                
+                {Object.entries(groupedViews).map(([category, views]) => (
+                  <TabsContent key={category} value={category} className="mt-0 p-4">
+                    <div className="space-y-2">
+                      {views.map(view => (
+                        <Card
+                          key={view.id}
+                          className={`cursor-pointer transition-colors ${
+                            selectedView?.id === view.id ? 'bg-accent' : 'hover:bg-accent/50'
+                          }`}
+                          onClick={() => setSelectedView(view)}
+                        >
+                          <CardHeader className="p-4">
+                            <CardTitle className="text-sm">{view.name}</CardTitle>
+                            {view.description && (
+                              <CardDescription className="text-xs mt-1">
+                                {view.description}
+                              </CardDescription>
+                            )}
+                          </CardHeader>
+                        </Card>
+                      ))}
+                    </div>
+                  </TabsContent>
                 ))}
-              </TabsList>
-              
-              {Object.entries(groupedViews).map(([category, views]) => (
-                <TabsContent key={category} value={category} className="mt-0 p-4">
-                  <div className="space-y-2">
-                    {views.map(view => (
-                      <Card
-                        key={view.id}
-                        className={`cursor-pointer transition-colors ${
-                          selectedView?.id === view.id ? 'bg-accent' : 'hover:bg-accent/50'
-                        }`}
-                        onClick={() => setSelectedView(view)}
-                      >
-                        <CardHeader className="p-4">
-                          <CardTitle className="text-sm">{view.name}</CardTitle>
-                          {view.description && (
-                            <CardDescription className="text-xs mt-1">
-                              {view.description}
-                            </CardDescription>
-                          )}
-                        </CardHeader>
-                      </Card>
-                    ))}
-                  </div>
-                </TabsContent>
-              ))}
-            </Tabs>
+              </Tabs>
+            ) : (
+              <div className="p-4">
+                <div className="space-y-2">
+                  {Object.values(groupedViews)[0]?.map(view => (
+                    <Card
+                      key={view.id}
+                      className={`cursor-pointer transition-colors ${
+                        selectedView?.id === view.id ? 'bg-accent' : 'hover:bg-accent/50'
+                      }`}
+                      onClick={() => setSelectedView(view)}
+                    >
+                      <CardHeader className="p-4">
+                        <CardTitle className="text-sm">{view.name}</CardTitle>
+                        {view.description && (
+                          <CardDescription className="text-xs mt-1">
+                            {view.description}
+                          </CardDescription>
+                        )}
+                      </CardHeader>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            )}
           </ScrollArea>
         </div>
 
         {/* Main content area */}
-        <div className="flex-1">
+        <div className="flex-1 overflow-hidden">
           <ScrollArea className="h-full">
             {selectedView ? (
               <div className="p-8">
@@ -141,10 +285,14 @@ export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
                 ) : error ? (
                   <div className="text-red-500">Error: {error}</div>
                 ) : (
-                  <div className="prose prose-sm max-w-none dark:prose-invert">
-                    <div 
-                      dangerouslySetInnerHTML={{ __html: renderMarkdown(markdownContent) }}
-                    />
+                  <div className="max-w-none">
+                    <ReactMarkdown
+                      components={markdownComponents}
+                      remarkPlugins={[remarkGfm]}
+                      rehypePlugins={[rehypeHighlight, rehypeRaw]}
+                    >
+                      {markdownContent}
+                    </ReactMarkdown>
                   </div>
                 )}
               </div>
@@ -158,22 +306,4 @@ export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
       </div>
     </div>
   );
-}
-
-// Simple markdown renderer (in production, use a proper library)
-function renderMarkdown(content: string): string {
-  return content
-    .replace(/^# (.*$)/gim, '<h1 class="text-3xl font-bold mb-4">$1</h1>')
-    .replace(/^## (.*$)/gim, '<h2 class="text-2xl font-semibold mb-3 mt-6">$1</h2>')
-    .replace(/^### (.*$)/gim, '<h3 class="text-xl font-semibold mb-2 mt-4">$1</h3>')
-    .replace(/\*\*(.*)\*\*/g, '<strong>$1</strong>')
-    .replace(/\*(.*)\*/g, '<em>$1</em>')
-    .replace(/```(.*?)```/gs, '<pre class="bg-muted p-4 rounded-lg overflow-x-auto my-4"><code>$1</code></pre>')
-    .replace(/`([^`]+)`/g, '<code class="bg-muted px-1 py-0.5 rounded">$1</code>')
-    .replace(/^- (.*$)/gim, '<li class="ml-4">$1</li>')
-    .replace(/^\d+\. (.*$)/gim, '<li class="ml-4">$1</li>')
-    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-primary hover:underline">$1</a>')
-    .replace(/\n\n/g, '</p><p class="mb-4">')
-    .replace(/^/, '<p class="mb-4">')
-    .replace(/$/, '</p>');
 }
