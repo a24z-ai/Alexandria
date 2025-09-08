@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import type { CodebaseViewSummary } from 'a24z-memory';
 import { AlexandriaAPI } from '@/lib/alexandria-api';
 import { ThemeToggle } from './ThemeToggle';
+import { EmptyState } from './EmptyState';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
@@ -15,27 +16,27 @@ import type { Components } from 'react-markdown';
 // Custom components for markdown rendering
 const markdownComponents: Components = {
   h1: ({ children }) => (
-    <h1 className="text-4xl font-bold mb-6 mt-2 text-gray-200 dark:text-gray-200">
+    <h1 className="text-4xl font-bold mb-6 mt-2 text-gray-200 dark:text-gray-300">
       {children}
     </h1>
   ),
   h2: ({ children }) => (
-    <h2 className="text-3xl font-semibold mb-4 mt-8 text-gray-200 dark:text-gray-200">
+    <h2 className="text-3xl font-semibold mb-4 mt-8 text-gray-200 dark:text-gray-300">
       {children}
     </h2>
   ),
   h3: ({ children }) => (
-    <h3 className="text-2xl font-semibold mb-3 mt-6 text-gray-300 dark:text-gray-300">
+    <h3 className="text-2xl font-semibold mb-3 mt-6 text-gray-300 dark:text-gray-400">
       {children}
     </h3>
   ),
   h4: ({ children }) => (
-    <h4 className="text-xl font-semibold mb-2 mt-4 text-gray-300 dark:text-gray-300">
+    <h4 className="text-xl font-semibold mb-2 mt-4 text-gray-300 dark:text-gray-400">
       {children}
     </h4>
   ),
   p: ({ children }) => (
-    <p className="mb-4 leading-7 text-gray-400 dark:text-gray-400">
+    <p className="mb-4 leading-7 text-gray-400 dark:text-gray-500">
       {children}
     </p>
   ),
@@ -60,19 +61,19 @@ const markdownComponents: Components = {
     </ol>
   ),
   li: ({ children }) => (
-    <li className="text-gray-400 dark:text-gray-400">
+    <li className="text-gray-400 dark:text-gray-500">
       {children}
     </li>
   ),
   blockquote: ({ children }) => (
-    <blockquote className="border-l-4 border-gray-600 pl-4 py-2 my-4 italic text-gray-500 dark:text-gray-500">
+    <blockquote className="border-l-4 border-gray-600 pl-4 py-2 my-4 italic text-gray-500 dark:text-gray-600">
       {children}
     </blockquote>
   ),
   code: ({ inline, className, children }) => {
     if (inline) {
       return (
-        <code className="bg-zinc-800 px-1.5 py-0.5 rounded text-sm font-mono text-gray-300">
+        <code className="bg-zinc-800 dark:bg-zinc-900 px-1.5 py-0.5 rounded text-sm font-mono text-gray-300 dark:text-gray-400">
           {children}
         </code>
       );
@@ -101,12 +102,12 @@ const markdownComponents: Components = {
     </thead>
   ),
   th: ({ children }) => (
-    <th className="border border-zinc-700 px-4 py-2 text-left font-semibold text-gray-300">
+    <th className="border border-zinc-700 px-4 py-2 text-left font-semibold text-gray-300 dark:text-gray-400">
       {children}
     </th>
   ),
   td: ({ children }) => (
-    <td className="border border-zinc-700 px-4 py-2 text-gray-400">
+    <td className="border border-zinc-700 px-4 py-2 text-gray-400 dark:text-gray-500">
       {children}
     </td>
   ),
@@ -139,10 +140,20 @@ export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
   const [markdownContent, setMarkdownContent] = useState<string>('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
+    // Load sidebar state from localStorage
+    const saved = localStorage.getItem('sidebarCollapsed');
+    return saved ? JSON.parse(saved) : false;
+  });
   
   // Initialize API client
   const apiUrl = import.meta.env.PUBLIC_ALEXANDRIA_API_URL || 'https://git-gallery.com';
   const api = new AlexandriaAPI(apiUrl);
+
+  // Save sidebar state to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('sidebarCollapsed', JSON.stringify(sidebarCollapsed));
+  }, [sidebarCollapsed]);
 
   useEffect(() => {
     if (selectedView && selectedView.overviewPath) {
@@ -178,9 +189,18 @@ export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
     <div className="h-screen flex flex-col">
       <div className="border-b px-6 py-4 flex items-center justify-between flex-shrink-0">
         <div>
-          <h1 className="text-2xl font-bold">{manifest.repository}</h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            {manifest.views.length} views available
+          <h1 className="text-2xl font-bold">
+            <a 
+              href={`https://github.com/${manifest.repository}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:underline"
+            >
+              {manifest.repository.split('/')[1]}
+            </a>
+          </h1>
+          <p className="text-base text-muted-foreground">
+            by {manifest.repository.split('/')[0]}
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -205,9 +225,30 @@ export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
         </div>
       </div>
 
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1 flex overflow-hidden relative">
+        {/* Toggle button for sidebar */}
+        <button
+          onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+          className="absolute left-0 top-4 z-10 bg-background border border-border rounded-r-md p-2 hover:bg-accent transition-colors"
+          style={{ left: sidebarCollapsed ? 0 : '320px' }}
+          aria-label={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+        >
+          <svg
+            className="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            {sidebarCollapsed ? (
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            ) : (
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            )}
+          </svg>
+        </button>
+
         {/* Sidebar with views */}
-        <div className="w-80 border-r flex flex-col">
+        <div className={`${sidebarCollapsed ? 'w-0' : 'w-80'} border-r flex flex-col transition-all duration-300 overflow-hidden`}>
           <ScrollArea className="flex-1">
             {Object.keys(groupedViews).length > 1 ? (
               <Tabs defaultValue={Object.keys(groupedViews)[0]} className="w-full">
@@ -297,9 +338,7 @@ export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
                 )}
               </div>
             ) : (
-              <div className="h-full flex items-center justify-center text-muted-foreground">
-                Select a view from the sidebar to begin reading
-              </div>
+              <EmptyState />
             )}
           </ScrollArea>
         </div>
