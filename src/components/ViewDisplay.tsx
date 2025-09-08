@@ -1,10 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
+import { useState, useEffect } from 'react';
+import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import type { A24zView, ViewsManifest } from '@/data/mockData';
-import { mockMarkdownContent } from '@/data/mockData';
+import type { CodebaseView } from '@/lib/alexandria-api';
+import { AlexandriaAPI } from '@/lib/alexandria-api';
+
+interface ViewsManifest {
+  version: string;
+  repository: string;
+  views: CodebaseView[];
+}
 
 interface ViewDisplayProps {
   manifest: ViewsManifest;
@@ -13,23 +19,44 @@ interface ViewDisplayProps {
 }
 
 export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
-  const [selectedView, setSelectedView] = useState<A24zView | null>(null);
+  const [selectedView, setSelectedView] = useState<CodebaseView | null>(null);
   const [markdownContent, setMarkdownContent] = useState<string>('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  
+  // Initialize API client
+  const apiUrl = import.meta.env.PUBLIC_ALEXANDRIA_API_URL || 'https://git-gallery.com';
+  const api = new AlexandriaAPI(apiUrl);
 
   useEffect(() => {
-    if (selectedView) {
-      // In real app, fetch from GitHub
-      // For now, use mock content
-      setMarkdownContent(mockMarkdownContent);
+    if (selectedView && selectedView.overviewPath) {
+      const [owner, name] = manifest.repository.split('/');
+      
+      const fetchContent = async () => {
+        try {
+          setLoading(true);
+          setError(null);
+          // Fetch markdown content from GitHub via API or directly
+          const content = await api.getViewContent(owner, name, selectedView.overviewPath);
+          setMarkdownContent(content);
+        } catch (err) {
+          setError('Failed to load view content');
+          console.error('Error fetching view content:', err);
+        } finally {
+          setLoading(false);
+        }
+      };
+      
+      fetchContent();
     }
-  }, [selectedView]);
+  }, [selectedView, manifest.repository]);
 
   const groupedViews = manifest.views.reduce((acc, view) => {
     const type = view.type || 'other';
     if (!acc[type]) acc[type] = [];
     acc[type].push(view);
     return acc;
-  }, {} as Record<string, A24zView[]>);
+  }, {} as Record<string, CodebaseView[]>);
 
   return (
     <div className="h-full flex flex-col">
@@ -88,7 +115,7 @@ export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
                         onClick={() => setSelectedView(view)}
                       >
                         <CardHeader className="p-4">
-                          <CardTitle className="text-sm">{view.title}</CardTitle>
+                          <CardTitle className="text-sm">{view.name}</CardTitle>
                           {view.description && (
                             <CardDescription className="text-xs mt-1">
                               {view.description}
@@ -116,31 +143,17 @@ export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
           <ScrollArea className="h-full">
             {selectedView ? (
               <div className="p-8">
-                <div className="mb-6">
-                  <h2 className="text-3xl font-bold mb-2">{selectedView.title}</h2>
-                  {selectedView.description && (
-                    <p className="text-muted-foreground">{selectedView.description}</p>
-                  )}
-                  <div className="flex gap-2 mt-4">
-                    {selectedView.tags?.map(tag => (
-                      <Badge key={tag} variant="default">
-                        {tag}
-                      </Badge>
-                    ))}
-                    <Badge variant="outline">
-                      {selectedView.type || 'document'}
-                    </Badge>
+                {loading ? (
+                  <div className="text-muted-foreground">Loading content...</div>
+                ) : error ? (
+                  <div className="text-red-500">Error: {error}</div>
+                ) : (
+                  <div className="prose prose-sm max-w-none dark:prose-invert">
+                    <div 
+                      dangerouslySetInnerHTML={{ __html: renderMarkdown(markdownContent) }}
+                    />
                   </div>
-                  <p className="text-xs text-muted-foreground mt-4">
-                    Path: <code className="bg-muted px-1 py-0.5 rounded">{selectedView.docPath}</code>
-                  </p>
-                </div>
-                
-                <div className="prose prose-sm max-w-none dark:prose-invert">
-                  <div 
-                    dangerouslySetInnerHTML={{ __html: renderMarkdown(markdownContent) }}
-                  />
-                </div>
+                )}
               </div>
             ) : (
               <div className="h-full flex items-center justify-center text-muted-foreground">

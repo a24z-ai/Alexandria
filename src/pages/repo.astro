@@ -1,0 +1,11 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { RepositoryViewer } from '../components/RepositoryViewer';
+
+// Single page that handles all repository views client-side
+const backUrl = '/alexandria/';
+---
+
+<Layout title="Repository - Alexandria">
+  <RepositoryViewer client:only="react" backUrl={backUrl} />
+</Layout>

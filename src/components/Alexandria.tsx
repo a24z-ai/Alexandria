@@ -1,20 +1,59 @@
-import React, { useState } from 'react';
-import { Command, CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
+import React, { useState, useEffect } from 'react';
+import { CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { RepositoryCard } from './RepositoryCard';
-import { mockRepositories, getViewsForRepo, allTags } from '@/data/mockData';
 import { Button } from '@/components/ui/button';
-import type { Repository } from '@/data/mockData';
+import { AlexandriaAPI } from '@/lib/alexandria-api';
+import type { Repository } from '@/lib/alexandria-api';
 
 export function Alexandria() {
   const [searchOpen, setSearchOpen] = useState(false);
+  const [repositories, setRepositories] = useState<Repository[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [totalViews, setTotalViews] = useState(0);
+  const [uniqueTags, setUniqueTags] = useState<Set<string>>(new Set());
+
+  // Initialize API client with environment URL
+  const apiUrl = import.meta.env.PUBLIC_ALEXANDRIA_API_URL || 'https://git-gallery.com';
+  const api = new AlexandriaAPI(apiUrl);
+
+  // Fetch repositories on mount
+  useEffect(() => {
+    const fetchRepositories = async () => {
+      try {
+        setLoading(true);
+        const data = await api.getRepositories();
+        setRepositories(data.repositories);
+        
+        // Calculate stats
+        let viewCount = 0;
+        const tags = new Set<string>();
+        
+        data.repositories.forEach(repo => {
+          viewCount += repo.viewCount;
+          repo.tags?.forEach(tag => tags.add(tag));
+          repo.views?.forEach(view => {
+            view.tags?.forEach(tag => tags.add(tag));
+          });
+        });
+        
+        setTotalViews(viewCount);
+        setUniqueTags(tags);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to fetch repositories');
+        console.error('Error fetching repositories:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRepositories();
+  }, []);
 
   const handleRepoSelect = (repo: Repository) => {
-    // Navigate to the repository page with base path
-    window.location.href = `/alexandria/repo/${repo.id}`;
+    // Navigate to the repository page with query params
+    window.location.href = `/alexandria/repo?owner=${repo.owner}&name=${repo.name}`;
   };
-
-  // For now, show all repos
-  const filteredRepos = mockRepositories;
 
   // Keyboard shortcut for search
   React.useEffect(() => {
@@ -61,39 +100,52 @@ export function Alexandria() {
 
       {/* Main Content */}
       <main className="container mx-auto px-6 py-8">
-        {/* Stats Section */}
-        <div className="mb-8 pb-8 border-b">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="text-center">
-              <div className="text-3xl font-bold">{mockRepositories.length}</div>
-              <div className="text-sm text-muted-foreground">Repositories</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold">
-                {mockRepositories.reduce((acc, repo) => {
-                  const manifest = getViewsForRepo(repo.id);
-                  return acc + (manifest?.views.length || 0);
-                }, 0)}
-              </div>
-              <div className="text-sm text-muted-foreground">Total Views</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold">{allTags.length}</div>
-              <div className="text-sm text-muted-foreground">Unique Tags</div>
-            </div>
+        {loading ? (
+          <div className="flex justify-center items-center py-12">
+            <div className="text-muted-foreground">Loading repositories...</div>
           </div>
-        </div>
+        ) : error ? (
+          <div className="text-center py-12">
+            <p className="text-red-500 mb-4">Error: {error}</p>
+            <Button
+              variant="outline"
+              onClick={() => window.location.reload()}
+            >
+              Retry
+            </Button>
+          </div>
+        ) : (
+          <>
+            {/* Stats Section */}
+            <div className="mb-8 pb-8 border-b">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="text-center">
+                  <div className="text-3xl font-bold">{repositories.length}</div>
+                  <div className="text-sm text-muted-foreground">Repositories</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold">{totalViews}</div>
+                  <div className="text-sm text-muted-foreground">Total Views</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold">{uniqueTags.size}</div>
+                  <div className="text-sm text-muted-foreground">Unique Tags</div>
+                </div>
+              </div>
+            </div>
 
-        {/* Repository Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredRepos.map(repo => (
-            <RepositoryCard
-              key={repo.id}
-              repository={repo}
-              onSelect={handleRepoSelect}
-            />
-          ))}
-        </div>
+            {/* Repository Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {repositories.map(repo => (
+                <RepositoryCard
+                  key={repo.id}
+                  repository={repo}
+                  onSelect={handleRepoSelect}
+                />
+              ))}
+            </div>
+          </>
+        )}
       </main>
 
       {/* Command Dialog for Search */}
@@ -102,7 +154,7 @@ export function Alexandria() {
         <CommandList>
           <CommandEmpty>No results found.</CommandEmpty>
           <CommandGroup heading="Repositories">
-            {mockRepositories.map(repo => (
+            {repositories.map(repo => (
               <CommandItem
                 key={repo.id}
                 onSelect={() => {

@@ -1,8 +1,7 @@
-import React from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import type { Repository } from '@/data/mockData';
+import type { Repository } from '@/lib/alexandria-api';
 
 interface RepositoryCardProps {
   repository: Repository;
@@ -30,13 +29,13 @@ export function RepositoryCard({ repository, onSelect }: RepositoryCardProps) {
         )}
       </CardHeader>
       <CardContent>
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
           {repository.hasViews && (
-            <Badge variant="default">Has Views</Badge>
+            <Badge variant="default">{repository.viewCount} Views</Badge>
           )}
-          {repository.hasDocs && (
-            <Badge variant="secondary">Has Docs</Badge>
-          )}
+          {repository.tags?.map(tag => (
+            <Badge key={tag} variant="secondary">{tag}</Badge>
+          ))}
         </div>
         <div className="mt-4">
           <Button 

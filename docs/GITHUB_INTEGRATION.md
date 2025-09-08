@@ -99,97 +99,70 @@ Use this tool to validate: `https://jsonlint.com/`
 
 ## For Alexandria Frontend
 
-### 1. Fetching Views Data
+### 1. Using the Alexandria API
 
-The frontend fetches views directly from GitHub:
+The frontend now uses the Alexandria API instead of direct GitHub access:
 
 ```typescript
-async function fetchViews(owner: string, repo: string, branch = 'main') {
-  const url = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/.a24z/views.json`;
-  
-  try {
-    const response = await fetch(url);
-    if (!response.ok) throw new Error('Views not found');
-    
-    const data = await response.json();
-    return validateViewsManifest(data);
-  } catch (error) {
-    console.error(`Failed to fetch views for ${owner}/${repo}:`, error);
-    return null;
-  }
-}
+import { AlexandriaAPI } from '@/lib/alexandria-api';
+
+// Initialize with environment-specific URL
+const apiUrl = import.meta.env.PUBLIC_ALEXANDRIA_API_URL || 'https://git-gallery.com';
+const api = new AlexandriaAPI(apiUrl);
+
+// Fetch all repositories
+const data = await api.getRepositories();
+
+// Fetch specific repository
+const repo = await api.getRepository('owner', 'name');
+
+// Register new repository
+const result = await api.registerRepository({
+  owner: 'owner',
+  name: 'repo-name',
+  branch: 'main' // optional
+});
 ```
 
-### 2. Fetching Document Content
+### 2. API Benefits
 
-Fetch the actual markdown content:
+Using the Alexandria API provides:
 
-```typescript
-async function fetchDocument(owner: string, repo: string, docPath: string, branch = 'main') {
-  const url = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${docPath}`;
-  
-  const response = await fetch(url);
-  if (!response.ok) throw new Error('Document not found');
-  
-  return response.text();
-}
+- **Cached Data**: Repositories are cached in S3, reducing GitHub API calls
+- **Auto-refresh**: Data refreshes hourly when accessed
+- **Aggregated Views**: All repository views in a single response
+- **CORS Support**: Proper headers for browser access
+- **Error Resilience**: Falls back to cached data if GitHub is unavailable
+
+### 3. Environment Configuration
+
+Set the API URL in your environment:
+
+```env
+# .env file
+PUBLIC_ALEXANDRIA_API_URL=http://localhost:3002  # Development
+PUBLIC_ALEXANDRIA_API_URL=https://git-gallery.com # Production
 ```
 
-### 3. Handling Private Repositories
+### 4. Fetching Document Content
 
-For private repositories, you'll need authentication:
+For markdown content, the API client can still fetch directly from GitHub:
 
 ```typescript
-const headers = {
-  'Authorization': `token ${GITHUB_TOKEN}`,
-  'Accept': 'application/vnd.github.v3.raw'
-};
-
-const response = await fetch(url, { headers });
+// This goes directly to GitHub for now
+const content = await api.getViewContent('owner', 'repo', 'docs/file.md');
 ```
 
-### 4. Rate Limiting
+### 5. Error Handling
 
-GitHub API rate limits:
-- **Unauthenticated**: 60 requests/hour per IP
-- **Authenticated**: 5,000 requests/hour per token
-
-Use conditional requests to minimize API calls:
+The API provides consistent error responses:
 
 ```typescript
-const headers = {
-  'If-None-Match': etag, // From previous response
-};
-```
-
-### 5. Caching Strategy
-
-Implement client-side caching:
-
-```typescript
-const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
-
-class ViewsCache {
-  private cache = new Map();
-  
-  set(key: string, data: any) {
-    this.cache.set(key, {
-      data,
-      timestamp: Date.now()
-    });
-  }
-  
-  get(key: string) {
-    const entry = this.cache.get(key);
-    if (!entry) return null;
-    
-    if (Date.now() - entry.timestamp > CACHE_DURATION) {
-      this.cache.delete(key);
-      return null;
-    }
-    
-    return entry.data;
-  }
+try {
+  const repo = await api.getRepository('owner', 'name');
+} catch (error) {
+  // Error codes: REPOSITORY_NOT_FOUND, RATE_LIMITED, S3_CONNECTION_ERROR, etc.
+  console.error(error.message);
 }
 ```
 
