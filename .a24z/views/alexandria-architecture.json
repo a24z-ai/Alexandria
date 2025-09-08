@@ -1,0 +1,93 @@
+{
+  "id": "alexandria-architecture",
+  "version": "1.0.0",
+  "name": "Alexandria Architecture",
+  "description": "Complete architectural overview of the Alexandria documentation platform with system diagrams and component details",
+  "rows": 2,
+  "cols": 3,
+  "cells": {
+    "Frontend Components": {
+      "coordinates": [
+        0,
+        0
+      ],
+      "files": [
+        "src/components/Alexandria.tsx",
+        "src/components/RepositoryViewer.tsx",
+        "src/components/ViewDisplay.tsx"
+      ],
+      "priority": 0
+    },
+    "API & Data Layer": {
+      "coordinates": [
+        0,
+        1
+      ],
+      "files": [
+        "src/lib/alexandria-api.ts",
+        "src/data/mockData.ts"
+      ],
+      "priority": 0
+    },
+    "Pages & Routing": {
+      "coordinates": [
+        0,
+        2
+      ],
+      "files": [
+        "src/pages/index.astro",
+        "src/pages/repo.astro"
+      ],
+      "priority": 0
+    },
+    "UI Components": {
+      "coordinates": [
+        1,
+        0
+      ],
+      "files": [
+        "src/components/ui/card.tsx",
+        "src/components/ui/tabs.tsx",
+        "src/components/ui/command.tsx"
+      ],
+      "priority": 0
+    },
+    "Supporting Components": {
+      "coordinates": [
+        1,
+        1
+      ],
+      "files": [
+        "src/components/RepositoryCard.tsx",
+        "src/components/ThemeToggle.tsx",
+        "src/components/EmptyState.tsx"
+      ],
+      "priority": 0
+    },
+    "Configuration": {
+      "coordinates": [
+        1,
+        2
+      ],
+      "files": [
+        "package.json",
+        "astro.config.mjs",
+        "tsconfig.json"
+      ],
+      "priority": 0
+    }
+  },
+  "overviewPath": "docs/ARCHITECTURE.md",
+  "category": "other",
+  "timestamp": "2025-09-08T17:24:43.909Z",
+  "metadata": {
+    "generationType": "user",
+    "ui": {
+      "enabled": true,
+      "rows": 2,
+      "cols": 3,
+      "showCellLabels": true,
+      "cellLabelPosition": "top"
+    }
+  }
+}
