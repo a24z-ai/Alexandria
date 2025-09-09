@@ -7,6 +7,7 @@ import { AlexandriaAPI } from '@/lib/alexandria-api';
 import { ThemeToggle } from './ThemeToggle';
 import { FontScaleControls } from './FontScaleControls';
 import { EmptyState } from './EmptyState';
+import { AnimatedBookIcon } from './AnimatedBookIcon';
 import { BookOpen, Link2, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { IndustryMarkdownSlide, ThemeProvider } from 'themed-markdown';
@@ -151,7 +152,15 @@ export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
     <div className="h-screen flex flex-col">
       <div className="border-b px-6 py-4 flex items-center justify-between flex-shrink-0">
         <div className="flex items-center gap-3">
-          <BookOpen className="h-10 w-10 text-primary" />
+          {(onBack || backUrl) ? (
+            <AnimatedBookIcon 
+              size={40}
+              className="text-primary"
+              onClick={onBack || (() => backUrl && (window.location.href = backUrl))}
+            />
+          ) : (
+            <BookOpen className="h-10 w-10 text-primary" />
+          )}
           <div>
             <h1 className="text-2xl font-bold">
               <a 
@@ -169,23 +178,6 @@ export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          {(onBack || backUrl) && (
-            onBack ? (
-              <button
-                onClick={onBack}
-                className="text-sm text-muted-foreground hover:text-foreground"
-              >
-                ← Back to repositories
-              </button>
-            ) : (
-              <a
-                href={backUrl}
-                className="text-sm text-muted-foreground hover:text-foreground"
-              >
-                ← Back to repositories
-              </a>
-            )
-          )}
           {selectedView && selectedView.overviewPath && (
             <Button
               variant="ghost"
