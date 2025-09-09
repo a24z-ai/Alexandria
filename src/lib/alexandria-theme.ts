@@ -1,7 +1,7 @@
 import { defaultTheme } from 'themed-markdown';
 import type { Theme } from 'themed-markdown';
 
-// Preview theme with warmer, richer colors
+// Preview theme with warmer, richer colors (light mode)
 export const previewTheme: Theme = {
   ...defaultTheme,
   colors: {
@@ -32,35 +32,44 @@ export const previewTheme: Theme = {
     textSecondary: '#5C4B4B',        // Slightly lighter text
     textTertiary: '#8A837A',         // Muted text (matches muted base)
     textMuted: '#B0A79A',            // Very light, subtle text
-    
-    // Dark mode colors (keeping existing dark theme for now)
-    modes: {
-      dark: {
-        text: '#e5e5e5',
-        background: '#252525',
-        primary: '#d4d4d4',
-        secondary: '#454545',
-        accent: '#454545',
-        muted: '#454545',
-        border: 'rgba(255, 255, 255, 0.1)',
-        surface: '#343434',
-        backgroundSecondary: '#343434',
-        backgroundTertiary: '#454545',
-        backgroundLight: '#454545',
-        backgroundHover: '#454545',
-        textSecondary: '#b5b5b5',
-        textTertiary: '#b5b5b5',
-        textMuted: '#b5b5b5',
-        error: '#dc2626',
-        warning: '#d97706',
-        success: '#059669',
-        info: '#2563eb',
-      },
-    },
   },
 };
 
-// Alexandria theme that extends the default with our color system
+// Preview theme for dark mode
+export const previewThemeDark: Theme = {
+  ...defaultTheme,
+  colors: {
+    ...defaultTheme.colors,
+    
+    // Base colors
+    text: '#e5e5e5',
+    background: '#252525',
+    primary: '#d4d4d4',
+    secondary: '#454545',
+    accent: '#454545',
+    highlight: '#454545',
+    muted: '#454545',
+    
+    // Status colors
+    error: '#dc2626',
+    warning: '#d97706',
+    success: '#059669',
+    info: '#2563eb',
+    
+    // Additional semantic colors
+    border: 'rgba(255, 255, 255, 0.1)',
+    surface: '#343434',
+    backgroundSecondary: '#343434',
+    backgroundTertiary: '#454545',
+    backgroundLight: '#454545',
+    backgroundHover: '#454545',
+    textSecondary: '#b5b5b5',
+    textTertiary: '#b5b5b5',
+    textMuted: '#b5b5b5',
+  },
+};
+
+// Alexandria theme that extends the default with our color system (light mode)
 // Using actual hex colors for Mermaid diagram compatibility
 export const alexandriaTheme: Theme = {
   ...defaultTheme,
@@ -93,30 +102,41 @@ export const alexandriaTheme: Theme = {
     warning: '#f59e0b',        // amber
     success: '#10b981',        // emerald
     info: '#3b82f6',           // blue
+  },
+};
+
+// Alexandria theme for dark mode
+export const alexandriaThemeDark: Theme = {
+  ...defaultTheme,
+  colors: {
+    ...defaultTheme.colors,
     
     // Dark mode colors
-    modes: {
-      dark: {
-        text: '#e5e5e5',       // Softer white, less harsh on eyes
-        background: '#252525',  // oklch(0.145 0 0)
-        primary: '#d4d4d4',     // Softer white for primary
-        secondary: '#454545',   // oklch(0.269 0 0)
-        accent: '#454545',      // oklch(0.269 0 0)
-        muted: '#454545',       // oklch(0.269 0 0)
-        border: 'rgba(255, 255, 255, 0.1)',
-        surface: '#343434',     // oklch(0.205 0 0)
-        backgroundSecondary: '#343434',
-        backgroundTertiary: '#454545',
-        backgroundLight: '#454545',
-        backgroundHover: '#454545',
-        textSecondary: '#b5b5b5', // oklch(0.708 0 0)
-        textTertiary: '#b5b5b5',
-        textMuted: '#b5b5b5',
-        error: '#dc2626',       // dark red
-        warning: '#d97706',     // dark amber
-        success: '#059669',     // dark emerald
-        info: '#2563eb',        // dark blue
-      },
-    },
+    text: '#e5e5e5',           // Softer white, less harsh on eyes
+    background: '#252525',     // oklch(0.145 0 0)
+    primary: '#d4d4d4',        // Softer white for primary
+    secondary: '#454545',      // oklch(0.269 0 0)
+    accent: '#454545',         // oklch(0.269 0 0)
+    highlight: '#454545',      
+    muted: '#454545',          // oklch(0.269 0 0)
+    border: 'rgba(255, 255, 255, 0.1)',
+    
+    // Surface and background variations
+    surface: '#343434',        // oklch(0.205 0 0)
+    backgroundSecondary: '#343434',
+    backgroundTertiary: '#454545',
+    backgroundLight: '#454545',
+    backgroundHover: '#454545',
+    
+    // Text variations
+    textSecondary: '#b5b5b5',  // oklch(0.708 0 0)
+    textTertiary: '#b5b5b5',
+    textMuted: '#b5b5b5',
+    
+    // Semantic colors
+    error: '#dc2626',          // dark red
+    warning: '#d97706',        // dark amber
+    success: '#059669',        // dark emerald
+    info: '#2563eb',           // dark blue
   },
 };

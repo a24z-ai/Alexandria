@@ -12,7 +12,7 @@ import { BookOpen, Link2, Check, Presentation, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { IndustryMarkdownSlide, SlidePresentation, ThemeProvider, parseMarkdownIntoPresentation } from 'themed-markdown';
 import 'themed-markdown/dist/index.css';
-import { alexandriaTheme } from '@/lib/alexandria-theme';
+import { alexandriaTheme, alexandriaThemeDark } from '@/lib/alexandria-theme';
 
 // Dynamically import mermaid and make it globally available
 if (typeof window !== 'undefined') {
@@ -40,6 +40,10 @@ export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
   const [error, setError] = useState<string | null>(null);
   const [fontScale, setFontScale] = useState<number>(1);
   const [copied, setCopied] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    // Check if dark mode is enabled
+    return document.documentElement.className === 'dark';
+  });
   const [viewMode, setViewMode] = useState<'document' | 'slides'>(() => {
     // Load view mode preference from localStorage
     const saved = localStorage.getItem('viewMode');
@@ -81,6 +85,25 @@ export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
   useEffect(() => {
     localStorage.setItem('viewMode', viewMode);
   }, [viewMode]);
+
+  // Listen for theme changes
+  useEffect(() => {
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+          const isDark = document.documentElement.className === 'dark';
+          setIsDarkMode(isDark);
+        }
+      });
+    });
+
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class']
+    });
+
+    return () => observer.disconnect();
+  }, []);
 
   // Initialize and listen for font scale changes
   useEffect(() => {
@@ -302,8 +325,8 @@ export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
             ) : error ? (
               <div className="p-8 text-red-500">Error: {error}</div>
             ) : (
-              <ThemeProvider theme={alexandriaTheme}>
-                {viewMode === 'document' ? (
+              <ThemeProvider theme={isDarkMode ? alexandriaThemeDark : alexandriaTheme}>
+                    {viewMode === 'document' ? (
                   <ScrollArea className="h-full">
                     <IndustryMarkdownSlide
                       content={markdownContent}
