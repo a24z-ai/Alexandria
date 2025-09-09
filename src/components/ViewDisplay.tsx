@@ -7,6 +7,7 @@ import { AlexandriaAPI } from '@/lib/alexandria-api';
 import { ThemeToggle } from './ThemeToggle';
 import { FontScaleControls } from './FontScaleControls';
 import { EmptyState } from './EmptyState';
+import { BookOpen } from 'lucide-react';
 import { IndustryMarkdownSlide, ThemeProvider } from 'themed-markdown';
 import 'themed-markdown/dist/index.css';
 import { alexandriaTheme } from '@/lib/alexandria-theme';
@@ -71,12 +72,6 @@ export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
     };
   }, []);
 
-  // Auto-select first view on load
-  useEffect(() => {
-    if (manifest.views.length > 0 && !selectedView) {
-      setSelectedView(manifest.views[0]);
-    }
-  }, [manifest.views]);
 
   useEffect(() => {
     if (selectedView && selectedView.overviewPath) {
@@ -111,20 +106,23 @@ export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
   return (
     <div className="h-screen flex flex-col">
       <div className="border-b px-6 py-4 flex items-center justify-between flex-shrink-0">
-        <div>
-          <h1 className="text-2xl font-bold">
-            <a 
-              href={`https://github.com/${manifest.repository}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:underline"
-            >
-              {manifest.repository.split('/')[1]}
-            </a>
-          </h1>
-          <p className="text-base text-muted-foreground">
-            by {manifest.repository.split('/')[0]}
-          </p>
+        <div className="flex items-center gap-3">
+          <BookOpen className="h-10 w-10 text-primary" />
+          <div>
+            <h1 className="text-2xl font-bold">
+              <a 
+                href={`https://github.com/${manifest.repository}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:underline"
+              >
+                {manifest.repository.split('/')[1]}
+              </a>
+            </h1>
+            <p className="text-base text-muted-foreground">
+              by {manifest.repository.split('/')[0]}
+            </p>
+          </div>
         </div>
         <div className="flex items-center gap-2">
           {(onBack || backUrl) && (
@@ -152,7 +150,7 @@ export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
       <div className="flex-1 flex overflow-hidden relative">
 
         {/* Sidebar with views */}
-        <div className={`${sidebarCollapsed ? 'w-0' : 'w-80'} border-r flex flex-col transition-all duration-300 overflow-hidden`}>
+        <div className={`${sidebarCollapsed ? 'w-0' : 'w-96'} border-r flex flex-col transition-all duration-300 overflow-hidden`}>
           <ScrollArea className="flex-1">
             {Object.keys(groupedViews).length > 1 ? (
               <Tabs defaultValue={Object.keys(groupedViews)[0]} className="w-full">
@@ -174,15 +172,15 @@ export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
                       {views.map(view => (
                         <Card
                           key={view.id}
-                          className={`cursor-pointer transition-colors ${
+                          className={`cursor-pointer transition-colors rounded-none py-0 ${
                             selectedView?.id === view.id ? 'bg-accent' : 'hover:bg-accent/50'
                           }`}
                           onClick={() => setSelectedView(view)}
                         >
-                          <CardHeader className="p-4">
-                            <CardTitle className="text-sm">{view.name}</CardTitle>
+                          <CardHeader className="p-4 px-6">
+                            <CardTitle className="text-lg">{view.name}</CardTitle>
                             {view.description && (
-                              <CardDescription className="text-xs mt-1">
+                              <CardDescription className="text-base mt-1">
                                 {view.description}
                               </CardDescription>
                             )}
@@ -199,15 +197,15 @@ export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
                   {Object.values(groupedViews)[0]?.map(view => (
                     <Card
                       key={view.id}
-                      className={`cursor-pointer transition-colors ${
+                      className={`cursor-pointer transition-colors rounded-none py-0 ${
                         selectedView?.id === view.id ? 'bg-accent' : 'hover:bg-accent/50'
                       }`}
                       onClick={() => setSelectedView(view)}
                     >
-                      <CardHeader className="p-4">
-                        <CardTitle className="text-sm">{view.name}</CardTitle>
+                      <CardHeader className="p-4 px-6">
+                        <CardTitle className="text-lg">{view.name}</CardTitle>
                         {view.description && (
-                          <CardDescription className="text-xs mt-1">
+                          <CardDescription className="text-base mt-1">
                             {view.description}
                           </CardDescription>
                         )}

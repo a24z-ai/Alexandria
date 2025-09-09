@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { AlexandriaAPI } from '@/lib/alexandria-api';
 import type { Repository } from '@/lib/alexandria-api';
 import { ThemeToggle } from './ThemeToggle';
+import { Library } from 'lucide-react';
 
 export function Alexandria() {
   const [searchOpen, setSearchOpen] = useState(false);
@@ -58,13 +59,16 @@ export function Alexandria() {
       <header className="border-b">
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold">
-                Alexandria <span className="text-sm font-normal text-muted-foreground">by a24z</span>
-              </h1>
-              <p className="text-sm text-muted-foreground mt-1">
-                Library of codebase views and documentation
-              </p>
+            <div className="flex items-center gap-3">
+              <Library className="h-12 w-12 text-primary" />
+              <div>
+                <h1 className="text-3xl font-bold">
+                  Alexandria <span className="text-sm font-normal text-muted-foreground">by a24z</span>
+                </h1>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Library of codebase views and documentation
+                </p>
+              </div>
             </div>
             <div className="flex items-center gap-4">
               {repositories.length > 15 && (
