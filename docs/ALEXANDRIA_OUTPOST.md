@@ -2,21 +2,19 @@
 
 ```mermaid
 graph TD
-    User[User Machine] -->|npm install| NPM[NPM Registry]
-    NPM -->|Download| Local[Local Installation]
+    CLI[alexandria-outpost serve] -->|Starts| Server[Express Server<br/>Port 3003]
+    CLI -->|--api-url flag| Config[Runtime Config]
     
-    Local --> CLI[CLI: alexandria-outpost]
-    CLI --> Server[Express Server<br/>Port 3003]
+    Server -->|Serves| UI[Static UI<br/>Pre-built Astro]
+    Server -->|Injects| Window[window.ALEXANDRIA_CONFIG]
     
-    Server --> UI[Static UI Files<br/>Astro Build]
-    Server -->|Inject Config| Config[window.ALEXANDRIA_CONFIG]
+    Window -->|Configures| API{API Endpoint}
+    API -->|Default| Remote[git-gallery.com]
+    API -->|Local Mode| Local[localhost:3002<br/>Memory Palace]
     
-    UI -->|API Calls| Remote[git-gallery.com API]
-    UI -->|Future| LocalAPI[Local Registry API<br/>Memory Palace]
-    
-    Config -->|Determines| Route{API Route}
-    Route -->|Default| Remote
-    Route -->|--api-url flag| LocalAPI
+    UI -->|Fetches Data| API
+    Remote -->|Repository Data| UI
+    Local -->|Local Repos| UI
 ```
 
 ## Overview
