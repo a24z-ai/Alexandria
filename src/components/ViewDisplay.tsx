@@ -7,7 +7,8 @@ import { AlexandriaAPI } from '@/lib/alexandria-api';
 import { ThemeToggle } from './ThemeToggle';
 import { FontScaleControls } from './FontScaleControls';
 import { EmptyState } from './EmptyState';
-import { BookOpen } from 'lucide-react';
+import { BookOpen, Link2, Check } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { IndustryMarkdownSlide, ThemeProvider } from 'themed-markdown';
 import 'themed-markdown/dist/index.css';
 import { alexandriaTheme } from '@/lib/alexandria-theme';
@@ -37,6 +38,7 @@ export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [fontScale, setFontScale] = useState<number>(1);
+  const [copied, setCopied] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
     // Load sidebar state from localStorage
     const saved = localStorage.getItem('sidebarCollapsed');
@@ -99,6 +101,19 @@ export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
     }
   }, [selectedView, manifest.repository]);
 
+  const copyMarkdownLink = () => {
+    if (selectedView && selectedView.overviewPath) {
+      const [owner, name] = manifest.repository.split('/');
+      const branch = 'main'; // Could be made configurable
+      const url = `https://raw.githubusercontent.com/${owner}/${name}/${branch}/${selectedView.overviewPath}`;
+      
+      navigator.clipboard.writeText(url).then(() => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      });
+    }
+  };
+
   const groupedViews = manifest.views.reduce((acc, view) => {
     const category = view.category || 'other';
     if (!acc[category]) acc[category] = [];
@@ -144,6 +159,21 @@ export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
                 ← Back to repositories
               </a>
             )
+          )}
+          {selectedView && selectedView.overviewPath && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={copyMarkdownLink}
+              title="Copy markdown link"
+              className="h-10 w-10"
+            >
+              {copied ? (
+                <Check className="h-4 w-4" />
+              ) : (
+                <Link2 className="h-4 w-4" />
+              )}
+            </Button>
           )}
           <FontScaleControls />
           <ThemeToggle />
