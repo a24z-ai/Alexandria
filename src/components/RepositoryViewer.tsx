@@ -24,7 +24,10 @@ export function RepositoryViewer({ backUrl }: RepositoryViewerProps) {
       // Fetch repository data
       const fetchRepository = async () => {
         try {
-          const apiUrl = import.meta.env.PUBLIC_ALEXANDRIA_API_URL || 'https://git-gallery.com';
+          const apiUrl = typeof window !== 'undefined' && (window as any).ALEXANDRIA_CONFIG?.apiUrl ? 
+                         (window as any).ALEXANDRIA_CONFIG.apiUrl :
+                         import.meta.env.PUBLIC_ALEXANDRIA_API_URL || 
+                         'https://git-gallery.com';
           const api = new AlexandriaAPI(apiUrl);
           const data = await api.getRepository(owner, name);
           setRepository(data);

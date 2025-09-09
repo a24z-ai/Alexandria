@@ -13,8 +13,11 @@ export function Alexandria() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Initialize API client with environment URL
-  const apiUrl = import.meta.env.PUBLIC_ALEXANDRIA_API_URL || 'https://git-gallery.com';
+  // Initialize API client with runtime or environment URL
+  const apiUrl = typeof window !== 'undefined' && (window as any).ALEXANDRIA_CONFIG?.apiUrl ? 
+                 (window as any).ALEXANDRIA_CONFIG.apiUrl :
+                 import.meta.env.PUBLIC_ALEXANDRIA_API_URL || 
+                 'https://git-gallery.com';
   const api = new AlexandriaAPI(apiUrl);
 
   // Fetch repositories on mount

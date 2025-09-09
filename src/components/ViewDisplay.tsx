@@ -44,7 +44,10 @@ export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
   });
   
   // Initialize API client
-  const apiUrl = import.meta.env.PUBLIC_ALEXANDRIA_API_URL || 'https://git-gallery.com';
+  const apiUrl = typeof window !== 'undefined' && (window as any).ALEXANDRIA_CONFIG?.apiUrl ? 
+                 (window as any).ALEXANDRIA_CONFIG.apiUrl :
+                 import.meta.env.PUBLIC_ALEXANDRIA_API_URL || 
+                 'https://git-gallery.com';
   const api = new AlexandriaAPI(apiUrl);
 
   // Save sidebar state to localStorage whenever it changes

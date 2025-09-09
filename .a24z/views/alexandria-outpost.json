@@ -1,0 +1,71 @@
+{
+  "id": "alexandria-outpost",
+  "version": "1.0.0",
+  "name": "alexandria-outpost",
+  "description": "Alexandria Outpost NPM package architecture and distribution strategy for local UI deployment",
+  "rows": 2,
+  "cols": 2,
+  "cells": {
+    "NPM Package Configuration": {
+      "coordinates": [
+        0,
+        0
+      ],
+      "files": [
+        "package-outpost.json",
+        "dist/cli.js",
+        "dist/server.js"
+      ],
+      "priority": 0
+    },
+    "Runtime Configuration": {
+      "coordinates": [
+        0,
+        1
+      ],
+      "files": [
+        "src/components/Alexandria.tsx",
+        "src/components/RepositoryViewer.tsx",
+        "src/components/ViewDisplay.tsx"
+      ],
+      "priority": 0
+    },
+    "Build System": {
+      "coordinates": [
+        1,
+        0
+      ],
+      "files": [
+        "astro.config.outpost.mjs",
+        "scripts/publish-outpost.sh",
+        "scripts/build-server.js",
+        ".npmignore"
+      ],
+      "priority": 0
+    },
+    "Documentation": {
+      "coordinates": [
+        1,
+        1
+      ],
+      "files": [
+        "README-outpost.md",
+        "docs/ALEXANDRIA_OUTPOST.md"
+      ],
+      "priority": 0
+    }
+  },
+  "overviewPath": "docs/ALEXANDRIA_OUTPOST.md",
+  "category": "other",
+  "timestamp": "2025-09-09T03:36:28.870Z",
+  "metadata": {
+    "generationType": "user",
+    "ui": {
+      "enabled": true,
+      "rows": 1,
+      "cols": 3,
+      "showCellLabels": true,
+      "cellLabelPosition": "top"
+    }
+  }
+}

@@ -1,0 +1,28 @@
+# Source files
+src/
+scripts/
+docs/
+
+# Development configs
+.env
+.env.example
+astro.config.mjs
+tsconfig.json
+tailwind.config.mjs
+postcss.config.mjs
+
+# GitHub
+.github/
+.git/
+
+# Build artifacts we don't need
+node_modules/
+.astro/
+
+# Development files
+*.log
+.DS_Store
+
+# Keep only what's needed
+# dist/ - server files
+# outpost-dist/ - built UI
