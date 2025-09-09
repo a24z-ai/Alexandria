@@ -16,8 +16,8 @@ export function Alexandria() {
   const [showLibrary, setShowLibrary] = useState(false);
 
   // Initialize API client with runtime or environment URL
-  const apiUrl = typeof window !== 'undefined' && (window as any).ALEXANDRIA_CONFIG?.apiUrl ? 
-                 (window as any).ALEXANDRIA_CONFIG.apiUrl :
+  const apiUrl = typeof window !== 'undefined' && window.ALEXANDRIA_CONFIG?.apiUrl ? 
+                 window.ALEXANDRIA_CONFIG.apiUrl :
                  import.meta.env.PUBLIC_ALEXANDRIA_API_URL || 
                  'https://git-gallery.com';
   const api = new AlexandriaAPI(apiUrl);
