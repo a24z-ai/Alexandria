@@ -331,50 +331,53 @@ export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
           bg-background
           border-r flex flex-col
           transition-all duration-300
-          overflow-hidden
           z-50 md:z-auto
         `}>
-          <ScrollArea className="flex-1">
-            {sortedCategories.length > 1 ? (
-              <Tabs defaultValue={sortedCategories[0]} className="w-full">
-                <TabsList className="w-full justify-start rounded-none border-b h-auto p-0">
-                  {sortedCategories.map(category => (
-                    <TabsTrigger 
-                      key={category}
-                      value={category}
-                      className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary"
-                    >
-                      {category.charAt(0).toUpperCase() + category.slice(1)}
-                    </TabsTrigger>
-                  ))}
-                </TabsList>
-                
+          {sortedCategories.length > 1 ? (
+            <Tabs defaultValue={sortedCategories[0]} className="w-full h-full flex flex-col">
+              <TabsList className="w-full justify-start rounded-none border-b h-auto p-0 flex-shrink-0">
                 {sortedCategories.map(category => (
-                  <TabsContent key={category} value={category} className="mt-0 p-4">
-                    <div className="space-y-2">
-                      {groupedViews[category].map(view => (
-                        <Card
-                          key={view.id}
-                          className={`cursor-pointer transition-colors rounded-none py-0 ${
-                            selectedView?.id === view.id ? 'bg-accent' : 'hover:bg-accent/50'
-                          }`}
-                          onClick={() => handleMobileViewSelect(view)}
-                        >
-                          <CardHeader className="p-4 px-6">
-                            <CardTitle className="text-lg">{view.name}</CardTitle>
-                            {view.description && (
-                              <CardDescription className="text-base mt-1">
-                                {view.description}
-                              </CardDescription>
-                            )}
-                          </CardHeader>
-                        </Card>
-                      ))}
-                    </div>
-                  </TabsContent>
+                  <TabsTrigger 
+                    key={category}
+                    value={category}
+                    className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary"
+                  >
+                    {category.charAt(0).toUpperCase() + category.slice(1)}
+                  </TabsTrigger>
                 ))}
-              </Tabs>
+              </TabsList>
+              
+              {sortedCategories.map(category => (
+                <TabsContent key={category} value={category} className="mt-0 flex-1 overflow-hidden">
+                  <ScrollArea className="h-full">
+                    <div className="p-4">
+                      <div className="space-y-2">
+                        {groupedViews[category].map(view => (
+                          <Card
+                            key={view.id}
+                            className={`cursor-pointer transition-colors rounded-none py-0 ${
+                              selectedView?.id === view.id ? 'bg-accent' : 'hover:bg-accent/50'
+                            }`}
+                            onClick={() => handleMobileViewSelect(view)}
+                          >
+                            <CardHeader className="p-4 px-6">
+                              <CardTitle className="text-lg">{view.name}</CardTitle>
+                              {view.description && (
+                                <CardDescription className="text-base mt-1">
+                                  {view.description}
+                                </CardDescription>
+                              )}
+                            </CardHeader>
+                          </Card>
+                        ))}
+                      </div>
+                    </div>
+                  </ScrollArea>
+                </TabsContent>
+              ))}
+            </Tabs>
             ) : (
+            <ScrollArea className="h-full">
               <div className="p-4">
                 <div className="space-y-2">
                   {Object.values(groupedViews)[0]?.map(view => (
@@ -397,8 +400,8 @@ export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
                   ))}
                 </div>
               </div>
+            </ScrollArea>
             )}
-          </ScrollArea>
         </div>
 
         {/* Main content area */}
