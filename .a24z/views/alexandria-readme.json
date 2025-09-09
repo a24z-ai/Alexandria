@@ -1,0 +1,73 @@
+{
+  "id": "alexandria-readme",
+  "version": "1.0.0",
+  "name": "Welcome",
+  "description": "Alexandria - Library of Codebase Views main documentation and setup guide",
+  "rows": 2,
+  "cols": 2,
+  "cells": {
+    "Core Components": {
+      "coordinates": [
+        0,
+        0
+      ],
+      "files": [
+        "src/components/Alexandria.tsx",
+        "src/components/RepositoryViewer.tsx",
+        "src/components/ViewDisplay.tsx",
+        "src/lib/alexandria-api.ts"
+      ],
+      "priority": 0
+    },
+    "Configuration": {
+      "coordinates": [
+        0,
+        1
+      ],
+      "files": [
+        "astro.config.mjs",
+        "package.json",
+        ".github/workflows/alexandria.yml"
+      ],
+      "priority": 0
+    },
+    "Documentation": {
+      "coordinates": [
+        1,
+        0
+      ],
+      "files": [
+        "README.md",
+        "docs/ARCHITECTURE.md",
+        "docs/API_REQUIREMENTS.md",
+        "docs/GITHUB_INTEGRATION.md"
+      ],
+      "priority": 0
+    },
+    "Outpost Package": {
+      "coordinates": [
+        1,
+        1
+      ],
+      "files": [
+        "docs/ALEXANDRIA_OUTPOST.md",
+        "docs/OUTPOST_API_SPEC.md",
+        "package-outpost.json"
+      ],
+      "priority": 0
+    }
+  },
+  "overviewPath": "README.md",
+  "category": "other",
+  "timestamp": "2025-09-09T04:50:05.576Z",
+  "metadata": {
+    "generationType": "user",
+    "ui": {
+      "enabled": true,
+      "rows": 2,
+      "cols": 3,
+      "showCellLabels": true,
+      "cellLabelPosition": "top"
+    }
+  }
+}
