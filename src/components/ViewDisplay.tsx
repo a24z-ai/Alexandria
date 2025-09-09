@@ -8,7 +8,7 @@ import { ThemeToggle } from './ThemeToggle';
 import { FontScaleControls } from './FontScaleControls';
 import { EmptyState } from './EmptyState';
 import { AnimatedBookIcon } from './AnimatedBookIcon';
-import { BookOpen, Link2, Check, Presentation, FileText } from 'lucide-react';
+import { BookOpen, Link2, Check, Presentation, FileText, Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { IndustryMarkdownSlide, SlidePresentation, ThemeProvider, parseMarkdownIntoPresentation } from 'themed-markdown';
 import 'themed-markdown/dist/index.css';
@@ -49,10 +49,23 @@ export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
     const saved = localStorage.getItem('viewMode');
     return (saved === 'slides' || saved === 'document') ? saved : 'document';
   });
-  const [sidebarCollapsed, _setSidebarCollapsed] = useState(() => {
-    // Load sidebar state from localStorage
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
+    // Load sidebar state from localStorage, default to collapsed on mobile
     const saved = localStorage.getItem('sidebarCollapsed');
-    return saved ? JSON.parse(saved) : false;
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+    return saved ? JSON.parse(saved) : isMobile;
+  });
+  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
+  const [showCompactControls, setShowCompactControls] = useState(() => {
+    if (typeof window !== 'undefined') {
+      // Show compact controls (copy link only) when:
+      // - Portrait orientation on mobile/tablet
+      // - Very narrow screens (< 640px)
+      const isPortrait = window.innerHeight > window.innerWidth;
+      const isNarrow = window.innerWidth < 640;
+      return isPortrait || isNarrow;
+    }
+    return false;
   });
   
   // Check URL for view parameter on mount
@@ -80,6 +93,37 @@ export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
   useEffect(() => {
     localStorage.setItem('sidebarCollapsed', JSON.stringify(sidebarCollapsed));
   }, [sidebarCollapsed]);
+
+  // Handle window resize and orientation
+  useEffect(() => {
+    const handleResize = () => {
+      const isMobile = window.innerWidth < 768;
+      if (isMobile) {
+        setSidebarCollapsed(true);
+      }
+      // Determine if we should show compact controls
+      const isPortrait = window.innerHeight > window.innerWidth;
+      const isNarrow = window.innerWidth < 640;
+      setShowCompactControls(isPortrait || isNarrow);
+    };
+
+    window.addEventListener('resize', handleResize);
+    window.addEventListener('orientationchange', handleResize);
+    
+    // Initial check
+    handleResize();
+    
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('orientationchange', handleResize);
+    };
+  }, []);
+
+  // Close mobile drawer when selecting a view
+  const handleMobileViewSelect = (view: CodebaseViewSummary) => {
+    handleViewSelect(view);
+    setMobileDrawerOpen(false);
+  };
 
   // Save view mode preference to localStorage whenever it changes
   useEffect(() => {
@@ -183,19 +227,33 @@ export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
 
   return (
     <div className="h-screen flex flex-col">
-      <div className="border-b px-6 py-4 flex items-center justify-between flex-shrink-0">
-        <div className="flex items-center gap-3">
+      <div className="border-b px-4 md:px-6 py-3 md:py-4 flex items-center justify-between flex-shrink-0">
+        <div className="flex items-center gap-2 md:gap-3">
+          {/* Mobile menu button */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="md:hidden h-9 w-9"
+            onClick={() => setMobileDrawerOpen(!mobileDrawerOpen)}
+          >
+            {mobileDrawerOpen ? (
+              <X className="h-5 w-5" />
+            ) : (
+              <Menu className="h-5 w-5" />
+            )}
+          </Button>
+
           {(onBack || backUrl) ? (
             <AnimatedBookIcon 
               size={40}
-              className="text-primary"
+              className="text-primary hidden md:block"
               onClick={onBack || (() => backUrl && (window.location.href = backUrl))}
             />
           ) : (
-            <BookOpen className="h-10 w-10 text-primary" />
+            <BookOpen className="h-8 w-8 md:h-10 md:w-10 text-primary" />
           )}
           <div>
-            <h1 className="text-2xl font-bold">
+            <h1 className="text-xl md:text-2xl font-bold">
               <a 
                 href={`https://github.com/${manifest.repository}`}
                 target="_blank"
@@ -205,12 +263,12 @@ export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
                 {manifest.repository.split('/')[1]}
               </a>
             </h1>
-            <p className="text-base text-muted-foreground">
+            <p className="text-sm md:text-base text-muted-foreground hidden md:block">
               by {manifest.repository.split('/')[0]}
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1 md:gap-2">
           {selectedView && selectedView.overviewPath && (
             <>
               <Button
@@ -218,7 +276,7 @@ export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
                 size="icon"
                 onClick={() => setViewMode(viewMode === 'document' ? 'slides' : 'document')}
                 title={viewMode === 'document' ? 'Switch to slides view' : 'Switch to document view'}
-                className="h-10 w-10"
+                className="h-9 w-9 md:h-10 md:w-10 hidden lg:flex"
               >
                 {viewMode === 'document' ? (
                   <Presentation className="h-4 w-4" />
@@ -231,7 +289,7 @@ export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
                 size="icon"
                 onClick={copyMarkdownLink}
                 title="Copy markdown link"
-                className="h-10 w-10"
+                className={`h-9 w-9 md:h-10 md:w-10 ${showCompactControls ? 'flex' : 'hidden lg:flex'}`}
               >
                 {copied ? (
                   <Check className="h-4 w-4" />
@@ -241,15 +299,34 @@ export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
               </Button>
             </>
           )}
-          <FontScaleControls />
+          <FontScaleControls className={`${showCompactControls ? 'hidden' : 'flex'}`} />
           <ThemeToggle />
         </div>
       </div>
 
       <div className="flex-1 flex overflow-hidden relative">
+        {/* Mobile drawer overlay */}
+        {mobileDrawerOpen && (
+          <div 
+            className="fixed inset-0 bg-black/50 z-40 md:hidden"
+            onClick={() => setMobileDrawerOpen(false)}
+          />
+        )}
 
-        {/* Sidebar with views */}
-        <div className={`${sidebarCollapsed ? 'w-0' : 'w-96'} border-r flex flex-col transition-all duration-300 overflow-hidden`}>
+        {/* Sidebar with views - Desktop: collapsible, Mobile: drawer */}
+        <div className={`
+          ${mobileDrawerOpen ? 'translate-x-0' : '-translate-x-full'}
+          md:translate-x-0
+          ${sidebarCollapsed && !mobileDrawerOpen ? 'md:w-0' : 'md:w-96'}
+          fixed md:relative
+          inset-y-0 left-0
+          w-80 md:w-96
+          bg-background
+          border-r flex flex-col
+          transition-all duration-300
+          overflow-hidden
+          z-50 md:z-auto
+        `}>
           <ScrollArea className="flex-1">
             {Object.keys(groupedViews).length > 1 ? (
               <Tabs defaultValue={Object.keys(groupedViews)[0]} className="w-full">
@@ -274,7 +351,7 @@ export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
                           className={`cursor-pointer transition-colors rounded-none py-0 ${
                             selectedView?.id === view.id ? 'bg-accent' : 'hover:bg-accent/50'
                           }`}
-                          onClick={() => handleViewSelect(view)}
+                          onClick={() => handleMobileViewSelect(view)}
                         >
                           <CardHeader className="p-4 px-6">
                             <CardTitle className="text-lg">{view.name}</CardTitle>
@@ -318,7 +395,7 @@ export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
         </div>
 
         {/* Main content area */}
-        <div className="flex-1 overflow-hidden">
+        <div className="flex-1 overflow-hidden w-full">
           {selectedView ? (
             loading ? (
               <div className="p-8 text-muted-foreground">Loading content...</div>
@@ -327,14 +404,14 @@ export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
             ) : (
               <ThemeProvider theme={isDarkMode ? alexandriaThemeDark : alexandriaTheme}>
                     {viewMode === 'document' ? (
-                  <ScrollArea className="h-full">
+                  <div className="h-full overflow-y-auto overflow-x-hidden">
                     <IndustryMarkdownSlide
                       content={markdownContent}
                       slideIdPrefix="view"
                       slideIndex={0}
                       fontSizeScale={fontScale}
                     />
-                  </ScrollArea>
+                  </div>
                 ) : (() => {
                   const presentation = parseMarkdownIntoPresentation(markdownContent);
                   const slideContents = presentation.slides.map(slide => slide.location.content);

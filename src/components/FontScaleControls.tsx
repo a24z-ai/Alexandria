@@ -2,7 +2,11 @@ import { useEffect, useState } from 'react';
 import { Minus, Plus } from 'lucide-react';
 import { Button } from './ui/button';
 
-export function FontScaleControls() {
+interface FontScaleControlsProps {
+  className?: string;
+}
+
+export function FontScaleControls({ className }: FontScaleControlsProps = {}) {
   const [fontScale, setFontScale] = useState<number>(1);
 
   useEffect(() => {
@@ -39,7 +43,7 @@ export function FontScaleControls() {
   };
 
   return (
-    <div className="flex items-center gap-1">
+    <div className={`flex items-center gap-1 ${className || ''}`}>
       <Button
         variant="ghost"
         size="icon"
