@@ -5,13 +5,15 @@ import { Button } from '@/components/ui/button';
 import { AlexandriaAPI } from '@/lib/alexandria-api';
 import type { Repository } from '@/lib/alexandria-api';
 import { ThemeToggle } from './ThemeToggle';
-import { Library } from 'lucide-react';
+import { ProductShowcase } from './ProductShowcase';
+import { Library, Home } from 'lucide-react';
 
 export function Alexandria() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [repositories, setRepositories] = useState<Repository[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showLibrary, setShowLibrary] = useState(false);
 
   // Initialize API client with runtime or environment URL
   const apiUrl = typeof window !== 'undefined' && (window as any).ALEXANDRIA_CONFIG?.apiUrl ? 
@@ -69,7 +71,7 @@ export function Alexandria() {
                   Alexandria <span className="text-sm font-normal text-muted-foreground">by a24z</span>
                 </h1>
                 <p className="text-sm text-muted-foreground mt-1">
-                  Library of codebase views and documentation
+                  Supercharging Agent Orchestration
                 </p>
               </div>
             </div>
@@ -94,7 +96,9 @@ export function Alexandria() {
 
       {/* Main Content */}
       <main className="container mx-auto px-6 py-8">
-        {loading ? (
+        {!showLibrary ? (
+          <ProductShowcase onShowLibrary={() => setShowLibrary(true)} />
+        ) : loading ? (
           <div className="flex justify-center items-center py-12">
             <div className="text-muted-foreground">Loading repositories...</div>
           </div>
