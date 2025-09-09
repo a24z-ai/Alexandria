@@ -1,0 +1,43 @@
+{
+  "id": "outpost-api-spec",
+  "version": "1.0.0",
+  "name": "outpost-api-spec",
+  "description": "API specification and implementation guide for Memory Palace local server",
+  "rows": 1,
+  "cols": 2,
+  "cells": {
+    "File System Structure": {
+      "coordinates": [
+        0,
+        0
+      ],
+      "files": [
+        "json"
+      ],
+      "priority": 0
+    },
+    "Repository Discovery": {
+      "coordinates": [
+        0,
+        1
+      ],
+      "files": [
+        "json"
+      ],
+      "priority": 0
+    }
+  },
+  "overviewPath": "docs/OUTPOST_API_SPEC.md",
+  "category": "other",
+  "timestamp": "2025-09-09T03:48:15.718Z",
+  "metadata": {
+    "generationType": "user",
+    "ui": {
+      "enabled": true,
+      "rows": 1,
+      "cols": 2,
+      "showCellLabels": true,
+      "cellLabelPosition": "top"
+    }
+  }
+}
