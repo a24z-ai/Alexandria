@@ -1,6 +1,65 @@
 import { defaultTheme } from 'themed-markdown';
 import type { Theme } from 'themed-markdown';
 
+// Preview theme with warmer, richer colors
+export const previewTheme: Theme = {
+  ...defaultTheme,
+  colors: {
+    ...defaultTheme.colors,
+    
+    // Base colors
+    text: '#361B1B',           // Dark Brown/Near Black
+    background: '#F6F2EA',     // Parchment/Off-White
+    primary: '#0D3B4A',        // Deep Teal/Blue
+    secondary: '#EFCF83',      // Gold/Ochre
+    accent: '#AA5725',         // Terracotta/Red Ocher
+    highlight: '#F6DEB9',      // Lighter Gold/Brightened Ochre
+    muted: '#8A837A',          // Muted Gray-Brown
+    
+    // Status colors
+    success: '#4CAF50',        // Standard green
+    warning: '#FFC107',        // Standard amber
+    error: '#F44336',          // Standard red
+    info: '#2196F3',           // Standard blue
+    
+    // Additional semantic colors
+    border: '#C7B9A3',         // Lighter muted tone for borders
+    surface: '#FFFFFF',        // Pure white for cards
+    backgroundSecondary: '#EDE9E0',  // Slightly darker parchment
+    backgroundTertiary: '#DBCEB8',   // Even darker for section headers
+    backgroundLight: '#FFFFFF',      // Pure white for clean contrast
+    backgroundHover: '#E9E4DB',      // Subtle hover state
+    textSecondary: '#5C4B4B',        // Slightly lighter text
+    textTertiary: '#8A837A',         // Muted text (matches muted base)
+    textMuted: '#B0A79A',            // Very light, subtle text
+    
+    // Dark mode colors (keeping existing dark theme for now)
+    modes: {
+      dark: {
+        text: '#e5e5e5',
+        background: '#252525',
+        primary: '#d4d4d4',
+        secondary: '#454545',
+        accent: '#454545',
+        muted: '#454545',
+        border: 'rgba(255, 255, 255, 0.1)',
+        surface: '#343434',
+        backgroundSecondary: '#343434',
+        backgroundTertiary: '#454545',
+        backgroundLight: '#454545',
+        backgroundHover: '#454545',
+        textSecondary: '#b5b5b5',
+        textTertiary: '#b5b5b5',
+        textMuted: '#b5b5b5',
+        error: '#dc2626',
+        warning: '#d97706',
+        success: '#059669',
+        info: '#2563eb',
+      },
+    },
+  },
+};
+
 // Alexandria theme that extends the default with our color system
 // Using actual hex colors for Mermaid diagram compatibility
 export const alexandriaTheme: Theme = {
