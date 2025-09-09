@@ -1,127 +1,21 @@
 import { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import type { CodebaseViewSummary } from 'a24z-memory';
 import { AlexandriaAPI } from '@/lib/alexandria-api';
 import { ThemeToggle } from './ThemeToggle';
 import { EmptyState } from './EmptyState';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
-import rehypeHighlight from 'rehype-highlight';
-import rehypeRaw from 'rehype-raw';
-import type { Components } from 'react-markdown';
+import { IndustryMarkdownSlide, ThemeProvider } from 'themed-markdown';
+import 'themed-markdown/dist/index.css';
+import { alexandriaTheme } from '@/lib/alexandria-theme';
 
-// Custom components for markdown rendering
-const markdownComponents: Components = {
-  h1: ({ children }) => (
-    <h1 className="text-4xl font-bold mb-6 mt-2 text-gray-200 dark:text-gray-300">
-      {children}
-    </h1>
-  ),
-  h2: ({ children }) => (
-    <h2 className="text-3xl font-semibold mb-4 mt-8 text-gray-200 dark:text-gray-300">
-      {children}
-    </h2>
-  ),
-  h3: ({ children }) => (
-    <h3 className="text-2xl font-semibold mb-3 mt-6 text-gray-300 dark:text-gray-400">
-      {children}
-    </h3>
-  ),
-  h4: ({ children }) => (
-    <h4 className="text-xl font-semibold mb-2 mt-4 text-gray-300 dark:text-gray-400">
-      {children}
-    </h4>
-  ),
-  p: ({ children }) => (
-    <p className="mb-4 leading-7 text-gray-400 dark:text-gray-500">
-      {children}
-    </p>
-  ),
-  a: ({ href, children }) => (
-    <a 
-      href={href}
-      className="text-blue-500 dark:text-blue-400 hover:underline font-medium"
-      target={href?.startsWith('http') ? '_blank' : undefined}
-      rel={href?.startsWith('http') ? 'noopener noreferrer' : undefined}
-    >
-      {children}
-    </a>
-  ),
-  ul: ({ children }) => (
-    <ul className="list-disc pl-6 mb-4 space-y-2">
-      {children}
-    </ul>
-  ),
-  ol: ({ children }) => (
-    <ol className="list-decimal pl-6 mb-4 space-y-2">
-      {children}
-    </ol>
-  ),
-  li: ({ children }) => (
-    <li className="text-gray-400 dark:text-gray-500">
-      {children}
-    </li>
-  ),
-  blockquote: ({ children }) => (
-    <blockquote className="border-l-4 border-gray-600 pl-4 py-2 my-4 italic text-gray-500 dark:text-gray-600">
-      {children}
-    </blockquote>
-  ),
-  code: ({ inline, className, children }) => {
-    if (inline) {
-      return (
-        <code className="bg-zinc-800 dark:bg-zinc-900 px-1.5 py-0.5 rounded text-sm font-mono text-gray-300 dark:text-gray-400">
-          {children}
-        </code>
-      );
-    }
-    return (
-      <code className={className}>
-        {children}
-      </code>
-    );
-  },
-  pre: ({ children }) => (
-    <pre className="bg-zinc-900 dark:bg-zinc-950 p-4 rounded-lg overflow-x-auto mb-4 border border-border">
-      {children}
-    </pre>
-  ),
-  table: ({ children }) => (
-    <div className="overflow-x-auto mb-4">
-      <table className="w-full border-collapse">
-        {children}
-      </table>
-    </div>
-  ),
-  thead: ({ children }) => (
-    <thead className="bg-muted">
-      {children}
-    </thead>
-  ),
-  th: ({ children }) => (
-    <th className="border border-zinc-700 px-4 py-2 text-left font-semibold text-gray-300 dark:text-gray-400">
-      {children}
-    </th>
-  ),
-  td: ({ children }) => (
-    <td className="border border-zinc-700 px-4 py-2 text-gray-400 dark:text-gray-500">
-      {children}
-    </td>
-  ),
-  hr: () => (
-    <hr className="my-8 border-zinc-700" />
-  ),
-  img: ({ src, alt }) => (
-    <img 
-      src={src} 
-      alt={alt} 
-      className="rounded-lg my-4 max-w-full h-auto"
-    />
-  ),
-};
+// Dynamically import mermaid and make it globally available
+if (typeof window !== 'undefined') {
+  import('mermaid').then((mermaidModule) => {
+    (window as Window & { mermaid?: typeof mermaidModule.default }).mermaid = mermaidModule.default;
+  });
+}
 
 interface ViewsManifest {
   version: string;
@@ -154,6 +48,13 @@ export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
   useEffect(() => {
     localStorage.setItem('sidebarCollapsed', JSON.stringify(sidebarCollapsed));
   }, [sidebarCollapsed]);
+
+  // Auto-select first view on load
+  useEffect(() => {
+    if (manifest.views.length > 0 && !selectedView) {
+      setSelectedView(manifest.views[0]);
+    }
+  }, [manifest.views]);
 
   useEffect(() => {
     if (selectedView && selectedView.overviewPath) {
@@ -226,26 +127,6 @@ export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
       </div>
 
       <div className="flex-1 flex overflow-hidden relative">
-        {/* Toggle button for sidebar */}
-        <button
-          onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-          className="absolute left-0 top-4 z-10 bg-background border border-border rounded-r-md p-2 hover:bg-accent transition-colors"
-          style={{ left: sidebarCollapsed ? 0 : '320px' }}
-          aria-label={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-        >
-          <svg
-            className="w-4 h-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            {sidebarCollapsed ? (
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            ) : (
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            )}
-          </svg>
-        </button>
 
         {/* Sidebar with views */}
         <div className={`${sidebarCollapsed ? 'w-0' : 'w-80'} border-r flex flex-col transition-all duration-300 overflow-hidden`}>
@@ -320,21 +201,19 @@ export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
         <div className="flex-1 overflow-hidden">
           <ScrollArea className="h-full">
             {selectedView ? (
-              <div className="p-8">
+              <div>
                 {loading ? (
-                  <div className="text-muted-foreground">Loading content...</div>
+                  <div className="p-8 text-muted-foreground">Loading content...</div>
                 ) : error ? (
-                  <div className="text-red-500">Error: {error}</div>
+                  <div className="p-8 text-red-500">Error: {error}</div>
                 ) : (
-                  <div className="max-w-none">
-                    <ReactMarkdown
-                      components={markdownComponents}
-                      remarkPlugins={[remarkGfm]}
-                      rehypePlugins={[rehypeHighlight, rehypeRaw]}
-                    >
-                      {markdownContent}
-                    </ReactMarkdown>
-                  </div>
+                  <ThemeProvider theme={alexandriaTheme}>
+                    <IndustryMarkdownSlide
+                      content={markdownContent}
+                      slideIdPrefix="view"
+                      slideIndex={0}
+                    />
+                  </ThemeProvider>
                 )}
               </div>
             ) : (

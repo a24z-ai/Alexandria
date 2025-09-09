@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { ViewDisplay } from './ViewDisplay';
 import { AlexandriaAPI } from '@/lib/alexandria-api';
 import type { Repository } from '@/lib/alexandria-api';
+import { ThemeProvider } from 'themed-markdown';
 
 interface RepositoryViewerProps {
   backUrl?: string;
@@ -70,5 +71,5 @@ export function RepositoryViewer({ backUrl }: RepositoryViewerProps) {
     views: repository.views || []
   };
 
-  return <ViewDisplay manifest={manifest} backUrl={backUrl} />;
+  return <ThemeProvider><ViewDisplay manifest={manifest} backUrl={backUrl} /></ThemeProvider>;
 }

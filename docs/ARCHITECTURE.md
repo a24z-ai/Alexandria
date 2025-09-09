@@ -5,9 +5,9 @@ Alexandria is a centralized platform for discovering and browsing a24z-memory do
 ## System Architecture
 
 ```mermaid
-graph TB
+%%{init: {'theme': 'neutral'}}%%
+graph
     subgraph "Client Browser"
-        UI[React UI Components]
         Router[Astro Router]
     end
     
@@ -54,14 +54,6 @@ graph TB
     UI --> Router
     Router --> HomePage
     Router --> RepoPage
-    
-    style UI fill:#e1f5fe
-    style Alexandria fill:#b3e5fc
-    style RepoViewer fill:#b3e5fc
-    style ViewDisplay fill:#b3e5fc
-    style API fill:#fff9c4
-    style GitGallery fill:#c8e6c9
-    style GitHub fill:#c8e6c9
 ```
 
 ## Core Components
