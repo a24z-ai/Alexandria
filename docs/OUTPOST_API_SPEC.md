@@ -6,7 +6,7 @@ graph LR
     UI -->|GET /api/alexandria/repos/:owner/:name| Get[Get Repository]
     UI -->|POST /api/alexandria/repos| Register[Register Repo]
     
-    List -->|Returns| RepoList[Repository[]]
+    List -->|Returns| RepoList[Repository Array]
     Get -->|Returns| Repo[Repository]
     Register -->|Returns| RegResult[RegisterResult]
     
