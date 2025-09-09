@@ -140,12 +140,10 @@ export class AlexandriaAPI {
   async getViewContent(owner: string, repo: string, docPath: string, branch: string = 'main'): Promise<string> {
     const url = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${docPath}`;
     
+    // Note: raw.githubusercontent.com doesn't support custom headers (triggers CORS preflight)
+    // Using cache: 'no-cache' only, which doesn't trigger preflight
     const response = await fetch(url, {
-      cache: 'no-cache',
-      headers: {
-        'Cache-Control': 'no-cache',
-        'Pragma': 'no-cache'
-      }
+      cache: 'no-cache'
     });
     if (!response.ok) {
       throw new Error(`Failed to fetch document: ${response.statusText}`);
