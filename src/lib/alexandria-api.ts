@@ -86,6 +86,7 @@ export class AlexandriaAPI {
     const response = await fetch(`${this.baseUrl}/api/alexandria/repos`, {
       method: 'GET',
       headers: this.headers,
+      cache: 'no-cache'
     });
 
     if (!response.ok) {
@@ -103,6 +104,7 @@ export class AlexandriaAPI {
     const response = await fetch(`${this.baseUrl}/api/alexandria/repos/${owner}/${name}`, {
       method: 'GET',
       headers: this.headers,
+      cache: 'no-cache'
     });
 
     if (!response.ok) {
@@ -138,7 +140,13 @@ export class AlexandriaAPI {
   async getViewContent(owner: string, repo: string, docPath: string, branch: string = 'main'): Promise<string> {
     const url = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${docPath}`;
     
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      cache: 'no-cache',
+      headers: {
+        'Cache-Control': 'no-cache',
+        'Pragma': 'no-cache'
+      }
+    });
     if (!response.ok) {
       throw new Error(`Failed to fetch document: ${response.statusText}`);
     }
