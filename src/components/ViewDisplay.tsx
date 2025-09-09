@@ -5,6 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import type { CodebaseViewSummary } from 'a24z-memory';
 import { AlexandriaAPI } from '@/lib/alexandria-api';
 import { ThemeToggle } from './ThemeToggle';
+import { FontScaleControls } from './FontScaleControls';
 import { EmptyState } from './EmptyState';
 import { IndustryMarkdownSlide, ThemeProvider } from 'themed-markdown';
 import 'themed-markdown/dist/index.css';
@@ -34,6 +35,7 @@ export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
   const [markdownContent, setMarkdownContent] = useState<string>('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [fontScale, setFontScale] = useState<number>(1);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
     // Load sidebar state from localStorage
     const saved = localStorage.getItem('sidebarCollapsed');
@@ -48,6 +50,26 @@ export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
   useEffect(() => {
     localStorage.setItem('sidebarCollapsed', JSON.stringify(sidebarCollapsed));
   }, [sidebarCollapsed]);
+
+  // Initialize and listen for font scale changes
+  useEffect(() => {
+    // Initialize font scale from localStorage
+    const savedScale = localStorage.getItem('fontScale');
+    if (savedScale) {
+      setFontScale(parseFloat(savedScale));
+    }
+
+    // Listen for font scale changes from FontScaleControls
+    const handleFontScaleChange = (event: CustomEvent) => {
+      setFontScale(event.detail.fontScale);
+    };
+
+    window.addEventListener('fontScaleChange', handleFontScaleChange as EventListener);
+    
+    return () => {
+      window.removeEventListener('fontScaleChange', handleFontScaleChange as EventListener);
+    };
+  }, []);
 
   // Auto-select first view on load
   useEffect(() => {
@@ -122,6 +144,7 @@ export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
               </a>
             )
           )}
+          <FontScaleControls />
           <ThemeToggle />
         </div>
       </div>
@@ -212,6 +235,7 @@ export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
                       content={markdownContent}
                       slideIdPrefix="view"
                       slideIndex={0}
+                      fontSizeScale={fontScale}
                     />
                   </ThemeProvider>
                 )}
