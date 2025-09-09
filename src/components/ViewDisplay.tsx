@@ -45,6 +45,20 @@ export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
     return saved ? JSON.parse(saved) : false;
   });
   
+  // Check URL for view parameter on mount
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const viewId = params.get('view');
+      if (viewId && manifest.views.length > 0) {
+        const view = manifest.views.find(v => v.id === viewId);
+        if (view) {
+          setSelectedView(view);
+        }
+      }
+    }
+  }, [manifest.views]);
+  
   // Initialize API client
   const apiUrl = typeof window !== 'undefined' && (window as any).ALEXANDRIA_CONFIG?.apiUrl ? 
                  (window as any).ALEXANDRIA_CONFIG.apiUrl :
@@ -111,6 +125,18 @@ export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
       });
+    }
+  };
+
+  const handleViewSelect = (view: CodebaseViewSummary) => {
+    setSelectedView(view);
+    
+    // Update URL with view parameter
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      params.set('view', view.id);
+      const newUrl = `${window.location.pathname}?${params.toString()}`;
+      window.history.replaceState({}, '', newUrl);
     }
   };
 
@@ -208,7 +234,7 @@ export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
                           className={`cursor-pointer transition-colors rounded-none py-0 ${
                             selectedView?.id === view.id ? 'bg-accent' : 'hover:bg-accent/50'
                           }`}
-                          onClick={() => setSelectedView(view)}
+                          onClick={() => handleViewSelect(view)}
                         >
                           <CardHeader className="p-4 px-6">
                             <CardTitle className="text-lg">{view.name}</CardTitle>
@@ -233,7 +259,7 @@ export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
                       className={`cursor-pointer transition-colors rounded-none py-0 ${
                         selectedView?.id === view.id ? 'bg-accent' : 'hover:bg-accent/50'
                       }`}
-                      onClick={() => setSelectedView(view)}
+                      onClick={() => handleViewSelect(view)}
                     >
                       <CardHeader className="p-4 px-6">
                         <CardTitle className="text-lg">{view.name}</CardTitle>
