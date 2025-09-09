@@ -1,7 +1,7 @@
 {
   "id": "alexandria-outpost",
   "version": "1.0.0",
-  "name": "alexandria-outpost",
+  "name": "Alexandria Outpost",
   "description": "Alexandria Outpost NPM package architecture and distribution strategy for local UI deployment",
   "rows": 2,
   "cols": 2,

@@ -8,9 +8,9 @@ import { ThemeToggle } from './ThemeToggle';
 import { FontScaleControls } from './FontScaleControls';
 import { EmptyState } from './EmptyState';
 import { AnimatedBookIcon } from './AnimatedBookIcon';
-import { BookOpen, Link2, Check } from 'lucide-react';
+import { BookOpen, Link2, Check, Presentation, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { IndustryMarkdownSlide, ThemeProvider } from 'themed-markdown';
+import { IndustryMarkdownSlide, SlidePresentation, ThemeProvider, parseMarkdownIntoPresentation } from 'themed-markdown';
 import 'themed-markdown/dist/index.css';
 import { alexandriaTheme } from '@/lib/alexandria-theme';
 
@@ -40,7 +40,12 @@ export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
   const [error, setError] = useState<string | null>(null);
   const [fontScale, setFontScale] = useState<number>(1);
   const [copied, setCopied] = useState(false);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
+  const [viewMode, setViewMode] = useState<'document' | 'slides'>(() => {
+    // Load view mode preference from localStorage
+    const saved = localStorage.getItem('viewMode');
+    return (saved === 'slides' || saved === 'document') ? saved : 'document';
+  });
+  const [sidebarCollapsed, _setSidebarCollapsed] = useState(() => {
     // Load sidebar state from localStorage
     const saved = localStorage.getItem('sidebarCollapsed');
     return saved ? JSON.parse(saved) : false;
@@ -71,6 +76,11 @@ export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
   useEffect(() => {
     localStorage.setItem('sidebarCollapsed', JSON.stringify(sidebarCollapsed));
   }, [sidebarCollapsed]);
+
+  // Save view mode preference to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('viewMode', viewMode);
+  }, [viewMode]);
 
   // Initialize and listen for font scale changes
   useEffect(() => {
@@ -179,19 +189,34 @@ export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
         </div>
         <div className="flex items-center gap-2">
           {selectedView && selectedView.overviewPath && (
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={copyMarkdownLink}
-              title="Copy markdown link"
-              className="h-10 w-10"
-            >
-              {copied ? (
-                <Check className="h-4 w-4" />
-              ) : (
-                <Link2 className="h-4 w-4" />
-              )}
-            </Button>
+            <>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setViewMode(viewMode === 'document' ? 'slides' : 'document')}
+                title={viewMode === 'document' ? 'Switch to slides view' : 'Switch to document view'}
+                className="h-10 w-10"
+              >
+                {viewMode === 'document' ? (
+                  <Presentation className="h-4 w-4" />
+                ) : (
+                  <FileText className="h-4 w-4" />
+                )}
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={copyMarkdownLink}
+                title="Copy markdown link"
+                className="h-10 w-10"
+              >
+                {copied ? (
+                  <Check className="h-4 w-4" />
+                ) : (
+                  <Link2 className="h-4 w-4" />
+                )}
+              </Button>
+            </>
           )}
           <FontScaleControls />
           <ThemeToggle />
@@ -271,28 +296,45 @@ export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
 
         {/* Main content area */}
         <div className="flex-1 overflow-hidden">
-          <ScrollArea className="h-full">
-            {selectedView ? (
-              <div>
-                {loading ? (
-                  <div className="p-8 text-muted-foreground">Loading content...</div>
-                ) : error ? (
-                  <div className="p-8 text-red-500">Error: {error}</div>
-                ) : (
-                  <ThemeProvider theme={alexandriaTheme}>
+          {selectedView ? (
+            loading ? (
+              <div className="p-8 text-muted-foreground">Loading content...</div>
+            ) : error ? (
+              <div className="p-8 text-red-500">Error: {error}</div>
+            ) : (
+              <ThemeProvider theme={alexandriaTheme}>
+                {viewMode === 'document' ? (
+                  <ScrollArea className="h-full">
                     <IndustryMarkdownSlide
                       content={markdownContent}
                       slideIdPrefix="view"
                       slideIndex={0}
                       fontSizeScale={fontScale}
                     />
-                  </ThemeProvider>
-                )}
-              </div>
-            ) : (
-              <EmptyState />
-            )}
-          </ScrollArea>
+                  </ScrollArea>
+                ) : (() => {
+                  const presentation = parseMarkdownIntoPresentation(markdownContent);
+                  const slideContents = presentation.slides.map(slide => slide.location.content);
+                  return (
+                    <div className="h-full w-full">
+                      <SlidePresentation
+                        slides={slideContents}
+                        showNavigation={true}
+                        showSlideCounter={true}
+                        showFullscreenButton={true}
+                        enableKeyboardScrolling={true}
+                        slideIdPrefix="presentation"
+                        containerHeight="100%"
+                        fontSizeScale={fontScale}
+                      />
+                    </div>
+                  );
+                })()}
+              </ThemeProvider>
+            )
+          ) : (
+            <EmptyState />
+          )}
         </div>
       </div>
     </div>
