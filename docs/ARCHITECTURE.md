@@ -5,7 +5,6 @@ Alexandria is a centralized platform for discovering and browsing a24z-memory do
 ## System Architecture
 
 ```mermaid
-%%{init: {'theme': 'neutral'}}%%
 graph
     subgraph "Client Browser"
         Router[Astro Router]
