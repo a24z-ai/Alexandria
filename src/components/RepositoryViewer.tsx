@@ -68,10 +68,15 @@ export function RepositoryViewer({ backUrl }: RepositoryViewerProps) {
   }
 
   // Transform repository data to match ViewDisplay expectations
+  // Sort views alphabetically by name
+  const sortedViews = [...(repository.views || [])].sort((a, b) => 
+    a.name.localeCompare(b.name)
+  );
+  
   const manifest = {
     version: '1.0.0',
     repository: repository.id,
-    views: repository.views || []
+    views: sortedViews
   };
 
   return <ThemeProvider><ViewDisplay manifest={manifest} backUrl={backUrl} /></ThemeProvider>;
