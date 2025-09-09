@@ -73,25 +73,18 @@ Response: Raw markdown content (text/plain)
 ### Repository
 ```typescript
 interface Repository {
-  id: string;
-  owner: string;
-  name: string;
-  description: string;
-  stars: number;
-  hasViews: boolean;
-  viewCount: number;
-  views: CodebaseViewSummary[];
-  lastUpdated: string;
-  tags?: string[];
+  id: string;                      // Used for React keys
+  owner: string;                   // Displayed and used for navigation
+  name: string;                    // Displayed and used for navigation
+  description: string;             // Shown in repository cards
+  stars: number;                   // Displayed with special formatting (k for thousands)
+  hasViews: boolean;              // Controls chapter count badge visibility
+  viewCount: number;              // Shows number of chapters
+  views: CodebaseViewSummary[];   // The actual codebase views to display
+  tags?: string[];                // Shown as badges (first 4 displayed)
   metadata?: {
-    primaryLanguage?: string | null;
-    topics?: string[];
-    license?: string | null;
-    lastCommit?: string | null;
-    defaultBranch?: string;
+    license?: string | null;      // Shown with license icon
   };
-  registeredAt?: string;
-  lastChecked?: string;
 }
 ```
 

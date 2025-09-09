@@ -1,6 +1,6 @@
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Book, Star } from 'lucide-react';
+import { Book, Star, Scale } from 'lucide-react';
 import type { Repository } from '@/lib/alexandria-api';
 
 interface RepositoryCardProps {
@@ -56,7 +56,7 @@ export function RepositoryCard({ repository, onSelect }: RepositoryCardProps) {
             </div>
           </CardHeader>
           
-          <CardContent className="px-6 pb-6">
+          <CardContent className="px-6 pb-6 space-y-3">
             {repository.tags && repository.tags.length > 0 && (
               <div className="flex gap-1.5 flex-wrap">
                 {repository.tags.slice(0, 4).map(tag => (
@@ -65,6 +65,12 @@ export function RepositoryCard({ repository, onSelect }: RepositoryCardProps) {
                 {repository.tags.length > 4 && (
                   <Badge variant="outline" className="text-xs">+{repository.tags.length - 4}</Badge>
                 )}
+              </div>
+            )}
+            {repository.metadata?.license && (
+              <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                <Scale className="h-3 w-3" />
+                <span>{repository.metadata.license}</span>
               </div>
             )}
           </CardContent>
