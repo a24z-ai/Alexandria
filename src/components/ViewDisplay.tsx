@@ -225,6 +225,13 @@ export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
     return acc;
   }, {} as Record<string, CodebaseViewSummary[]>);
 
+  // Sort categories alphabetically with "other" last
+  const sortedCategories = Object.keys(groupedViews).sort((a, b) => {
+    if (a === 'other') return 1;
+    if (b === 'other') return -1;
+    return a.localeCompare(b);
+  });
+
   return (
     <div className="h-screen flex flex-col">
       <div className="border-b px-4 md:px-6 py-3 md:py-4 flex items-center justify-between flex-shrink-0">
@@ -328,10 +335,10 @@ export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
           z-50 md:z-auto
         `}>
           <ScrollArea className="flex-1">
-            {Object.keys(groupedViews).length > 1 ? (
-              <Tabs defaultValue={Object.keys(groupedViews)[0]} className="w-full">
+            {sortedCategories.length > 1 ? (
+              <Tabs defaultValue={sortedCategories[0]} className="w-full">
                 <TabsList className="w-full justify-start rounded-none border-b h-auto p-0">
-                  {Object.keys(groupedViews).map(category => (
+                  {sortedCategories.map(category => (
                     <TabsTrigger 
                       key={category}
                       value={category}
@@ -342,10 +349,10 @@ export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
                   ))}
                 </TabsList>
                 
-                {Object.entries(groupedViews).map(([category, views]) => (
+                {sortedCategories.map(category => (
                   <TabsContent key={category} value={category} className="mt-0 p-4">
                     <div className="space-y-2">
-                      {views.map(view => (
+                      {groupedViews[category].map(view => (
                         <Card
                           key={view.id}
                           className={`cursor-pointer transition-colors rounded-none py-0 ${

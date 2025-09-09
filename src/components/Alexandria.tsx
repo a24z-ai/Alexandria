@@ -6,7 +6,7 @@ import { AlexandriaAPI } from '@/lib/alexandria-api';
 import type { Repository } from '@/lib/alexandria-api';
 import { ThemeToggle } from './ThemeToggle';
 import { ProductShowcase } from './ProductShowcase';
-import { Library, Home } from 'lucide-react';
+import { Library } from 'lucide-react';
 
 export function Alexandria() {
   const [searchOpen, setSearchOpen] = useState(false);
