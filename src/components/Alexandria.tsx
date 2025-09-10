@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { RepositoryCard } from './RepositoryCard';
 import { Button } from '@/components/ui/button';
@@ -22,11 +22,13 @@ export function Alexandria() {
   });
 
   // Initialize API client with runtime or environment URL
-  const apiUrl = typeof window !== 'undefined' && window.ALEXANDRIA_CONFIG?.apiUrl ? 
-                 window.ALEXANDRIA_CONFIG.apiUrl :
-                 import.meta.env.PUBLIC_ALEXANDRIA_API_URL || 
-                 'https://git-gallery.com';
-  const api = new AlexandriaAPI(apiUrl);
+  const api = useMemo(() => {
+    const apiUrl = typeof window !== 'undefined' && window.ALEXANDRIA_CONFIG?.apiUrl ? 
+                   window.ALEXANDRIA_CONFIG.apiUrl :
+                   import.meta.env.PUBLIC_ALEXANDRIA_API_URL || 
+                   'https://git-gallery.com';
+    return new AlexandriaAPI(apiUrl);
+  }, []);
 
   // Fetch repositories on mount
   useEffect(() => {
@@ -37,18 +39,18 @@ export function Alexandria() {
         setRepositories(data.repositories);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to fetch repositories');
-        console.error('Error fetching repositories:', err);
       } finally {
         setLoading(false);
       }
     };
 
     fetchRepositories();
-  }, []);
+  }, [api]);
 
   const handleRepoSelect = (repo: Repository) => {
     // Navigate to the repository page with query params
-    window.location.href = `/Alexandria/repo?owner=${repo.owner}&name=${repo.name}`;
+    const owner = repo.github?.owner || 'unknown';
+    window.location.href = `/Alexandria/repo?owner=${owner}&name=${repo.name}`;
   };
 
   // Keyboard shortcut for search (only when more than 15 repos)
@@ -138,7 +140,7 @@ export function Alexandria() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {repositories.map(repo => (
                 <RepositoryCard
-                  key={repo.id}
+                  key={`${repo.github?.owner || 'unknown'}/${repo.name}`}
                   repository={repo}
                   onSelect={handleRepoSelect}
                 />
@@ -157,14 +159,14 @@ export function Alexandria() {
             <CommandGroup heading="Repositories">
               {repositories.map(repo => (
                 <CommandItem
-                  key={repo.id}
+                  key={`${repo.github?.owner || 'unknown'}/${repo.name}`}
                   onSelect={() => {
                     handleRepoSelect(repo);
                     setSearchOpen(false);
                   }}
                 >
                   <span className="font-medium">{repo.name}</span>
-                  <span className="text-sm text-muted-foreground ml-2">by {repo.owner}</span>
+                  <span className="text-sm text-muted-foreground ml-2">by {repo.github?.owner || 'unknown'}</span>
                 </CommandItem>
               ))}
             </CommandGroup>

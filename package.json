@@ -8,6 +8,7 @@
     "preview": "astro preview",
     "astro": "astro",
     "typecheck": "astro check",
+    "typecheck:ts": "tsc --noEmit",
     "lint": "eslint src/ --ext .ts,.tsx",
     "lint:fix": "eslint src/ --ext .ts,.tsx --fix",
     "format": "prettier --write src/",

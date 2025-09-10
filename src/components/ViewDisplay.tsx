@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -83,11 +83,13 @@ export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
   }, [manifest.views]);
   
   // Initialize API client
-  const apiUrl = typeof window !== 'undefined' && window.ALEXANDRIA_CONFIG?.apiUrl ? 
-                 window.ALEXANDRIA_CONFIG.apiUrl :
-                 import.meta.env.PUBLIC_ALEXANDRIA_API_URL || 
-                 'https://git-gallery.com';
-  const api = new AlexandriaAPI(apiUrl);
+  const api = useMemo(() => {
+    const apiUrl = typeof window !== 'undefined' && window.ALEXANDRIA_CONFIG?.apiUrl ? 
+                   window.ALEXANDRIA_CONFIG.apiUrl :
+                   import.meta.env.PUBLIC_ALEXANDRIA_API_URL || 
+                   'https://git-gallery.com';
+    return new AlexandriaAPI(apiUrl);
+  }, []);
 
   // Save sidebar state to localStorage whenever it changes
   useEffect(() => {
@@ -181,9 +183,8 @@ export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
           // Fetch markdown content from GitHub via API or directly
           const content = await api.getViewContent(owner, name, selectedView.overviewPath);
           setMarkdownContent(content);
-        } catch (err) {
+        } catch {
           setError('Failed to load view content');
-          console.error('Error fetching view content:', err);
         } finally {
           setLoading(false);
         }
@@ -191,7 +192,7 @@ export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
       
       fetchContent();
     }
-  }, [selectedView, manifest.repository]);
+  }, [selectedView, manifest.repository, api]);
 
   const copyMarkdownLink = () => {
     if (selectedView && selectedView.overviewPath) {

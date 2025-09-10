@@ -33,7 +33,6 @@ export function RepositoryViewer({ backUrl }: RepositoryViewerProps) {
           setRepository(data);
         } catch (err) {
           setError(err instanceof Error ? err.message : 'Failed to fetch repository');
-          console.error('Error fetching repository:', err);
         } finally {
           setLoading(false);
         }
@@ -75,7 +74,7 @@ export function RepositoryViewer({ backUrl }: RepositoryViewerProps) {
   
   const manifest = {
     version: '1.0.0',
-    repository: repository.id,
+    repository: `${repository.github?.owner || 'unknown'}/${repository.name}`,
     views: sortedViews
   };
 
