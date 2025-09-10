@@ -226,9 +226,21 @@ export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
     return acc;
   }, {} as Record<string, CodebaseViewSummary[]>);
 
-  // Sort views within each category by name
+  // Sort views within each category by displayOrder, then by name
   Object.keys(groupedViews).forEach(category => {
-    groupedViews[category].sort((a, b) => a.name.localeCompare(b.name));
+    groupedViews[category].sort((a, b) => {
+      // First sort by displayOrder (lower numbers first)
+      // If displayOrder is undefined, treat it as a high number
+      const orderA = a.displayOrder ?? Number.MAX_SAFE_INTEGER;
+      const orderB = b.displayOrder ?? Number.MAX_SAFE_INTEGER;
+      
+      if (orderA !== orderB) {
+        return orderA - orderB;
+      }
+      
+      // If displayOrder is the same, sort by name
+      return a.name.localeCompare(b.name);
+    });
   });
 
   // Sort categories alphabetically with "other" last
