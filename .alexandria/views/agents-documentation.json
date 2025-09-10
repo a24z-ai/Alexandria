@@ -1,0 +1,30 @@
+{
+  "id": "agents-documentation",
+  "version": "1.0.0",
+  "name": "AI Agents Documentation",
+  "description": "Documentation for AI agents and their integration with Alexandria",
+  "rows": 1,
+  "cols": 1,
+  "cells": {
+    "Agent Documentation": {
+      "coordinates": [0, 0],
+      "files": [
+        "AGENTS.md"
+      ],
+      "priority": 0
+    }
+  },
+  "overviewPath": "AGENTS.md",
+  "category": "other",
+  "timestamp": "2025-09-10T00:00:00.000Z",
+  "metadata": {
+    "generationType": "user",
+    "ui": {
+      "enabled": true,
+      "rows": 1,
+      "cols": 1,
+      "showCellLabels": true,
+      "cellLabelPosition": "top"
+    }
+  }
+}

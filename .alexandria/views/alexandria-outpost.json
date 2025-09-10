@@ -12,9 +12,7 @@
         0
       ],
       "files": [
-        "package-outpost.json",
-        "dist/cli.js",
-        "dist/server.js"
+        "package-outpost.json"
       ],
       "priority": 0
     },

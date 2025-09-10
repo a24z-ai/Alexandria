@@ -12,7 +12,7 @@
         0
       ],
       "files": [
-        "json"
+        ".alexandriarc.json"
       ],
       "priority": 0
     },
@@ -22,7 +22,7 @@
         1
       ],
       "files": [
-        "json"
+        "package.json"
       ],
       "priority": 0
     }

@@ -1,0 +1,15 @@
+
+# Alexandria validation
+echo "Running Alexandria validation..."
+npx alexandria validate-all --errors-only || {
+  echo "❌ Alexandria validation failed (errors found)"
+  echo "   Run 'alexandria validate-all' to see details"
+  exit 1
+}
+
+echo "Running Alexandria lint..."
+alexandria lint --errors-only || {
+  echo "❌ Alexandria lint failed"
+  echo "   Run 'alexandria lint' to see details"
+  exit 1
+}
