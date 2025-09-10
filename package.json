@@ -46,7 +46,7 @@
     "remark-gfm": "^4.0.1",
     "tailwind-merge": "^3.3.1",
     "tailwindcss": "^4.1.13",
-    "themed-markdown": "^0.1.22"
+    "themed-markdown": "^0.1.23"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.4",
