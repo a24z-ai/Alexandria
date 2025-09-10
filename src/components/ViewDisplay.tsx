@@ -225,6 +225,11 @@ export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
     return acc;
   }, {} as Record<string, CodebaseViewSummary[]>);
 
+  // Sort views within each category by name
+  Object.keys(groupedViews).forEach(category => {
+    groupedViews[category].sort((a, b) => a.name.localeCompare(b.name));
+  });
+
   // Sort categories alphabetically with "other" last
   const sortedCategories = Object.keys(groupedViews).sort((a, b) => {
     if (a === 'other') return 1;
@@ -334,94 +339,138 @@ export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
           z-50 md:z-auto
         `}>
           {sortedCategories.length > 1 ? (
-            <Tabs defaultValue={sortedCategories[0]} className="w-full h-full flex flex-col">
+            <Tabs defaultValue={sortedCategories[0]} className="w-full h-full flex flex-col gap-0">
               <TabsList className="w-full justify-start rounded-none border-b h-auto p-0 flex-shrink-0">
                 {sortedCategories.map(category => (
                   <TabsTrigger 
                     key={category}
                     value={category}
-                    className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary"
+                    className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary py-3"
                   >
                     {category.charAt(0).toUpperCase() + category.slice(1)}
                   </TabsTrigger>
                 ))}
               </TabsList>
-              
               {sortedCategories.map(category => (
-                <TabsContent key={category} value={category} className="mt-0 flex-1 overflow-hidden">
-                  <ScrollArea className="h-full">
-                    <div className="p-4">
-                      <div className="space-y-2">
-                        {groupedViews[category].map(view => (
+                <TabsContent key={category} value={category} className="m-0 p-0 flex-1 overflow-hidden focus-visible:outline-none">
+                  <ScrollArea className="h-full p-0">
+                    <div className="flex flex-col">
+                      {groupedViews[category].map(view => (
                           <Card
                             key={view.id}
-                            className={`cursor-pointer transition-colors rounded-none py-0 ${
-                              selectedView?.id === view.id ? 'bg-accent' : 'hover:bg-accent/50'
+                            className={`cursor-pointer transition-all duration-200 border-0 rounded-none border-l-4 border-b ${
+                              selectedView?.id === view.id 
+                                ? 'bg-accent border-l-primary' 
+                                : 'hover:bg-accent/50 border-l-transparent hover:border-l-muted-foreground/30'
                             }`}
                             onClick={() => handleMobileViewSelect(view)}
                           >
-                            <CardHeader className="p-4 px-6">
-                              <CardTitle className="text-lg">{view.name}</CardTitle>
+                            <CardHeader className="px-3 py-2">
+                              <CardTitle className="text-base font-medium leading-tight">{view.name}</CardTitle>
                               {view.description && (
-                                <CardDescription className="text-base mt-1">
+                                <CardDescription className="text-sm mt-1.5 line-clamp-2">
                                   {view.description}
                                 </CardDescription>
+                              )}
+                              {view.overviewPath && (
+                                <div className="flex items-center gap-1 mt-2">
+                                  <svg className="w-3 h-3 text-muted-foreground/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                  </svg>
+                                  <span className="text-xs text-muted-foreground/80 truncate">
+                                    {view.overviewPath.split('/').pop()}
+                                  </span>
+                                </div>
                               )}
                             </CardHeader>
                           </Card>
                         ))}
-                      </div>
                     </div>
                   </ScrollArea>
                 </TabsContent>
               ))}
             </Tabs>
             ) : (
-            <ScrollArea className="h-full">
-              <div className="p-4">
-                <div className="space-y-2">
-                  {Object.values(groupedViews)[0]?.map(view => (
+            <ScrollArea className="h-full p-0">
+              <div className="flex flex-col">
+                {Object.values(groupedViews)[0]?.map(view => (
                     <Card
                       key={view.id}
-                      className={`cursor-pointer transition-colors rounded-none py-0 ${
-                        selectedView?.id === view.id ? 'bg-accent' : 'hover:bg-accent/50'
+                      className={`cursor-pointer transition-all duration-200 border-0 rounded-none border-l-4 border-b ${
+                        selectedView?.id === view.id 
+                          ? 'bg-accent border-l-primary' 
+                          : 'hover:bg-accent/50 border-l-transparent hover:border-l-muted-foreground/30'
                       }`}
                       onClick={() => handleViewSelect(view)}
                     >
-                      <CardHeader className="p-4 px-6">
-                        <CardTitle className="text-lg">{view.name}</CardTitle>
+                      <CardHeader className="px-3 py-2">
+                        <CardTitle className="text-base font-medium leading-tight">{view.name}</CardTitle>
                         {view.description && (
-                          <CardDescription className="text-base mt-1">
+                          <CardDescription className="text-sm mt-1.5 line-clamp-2">
                             {view.description}
                           </CardDescription>
                         )}
+                        {view.overviewPath && (
+                          <div className="flex items-center gap-1 mt-2">
+                            <svg className="w-3 h-3 text-muted-foreground/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                            <span className="text-xs text-muted-foreground/80 truncate">
+                              {view.overviewPath.split('/').pop()}
+                            </span>
+                          </div>
+                        )}
                       </CardHeader>
                     </Card>
-                  ))}
-                </div>
+                ))}
               </div>
             </ScrollArea>
             )}
         </div>
 
         {/* Main content area */}
-        <div className="flex-1 overflow-hidden w-full">
+        <div className="flex-1 overflow-hidden w-full relative">
           {selectedView ? (
-            loading ? (
-              <div className="p-8 text-muted-foreground">Loading content...</div>
-            ) : error ? (
-              <div className="p-8 text-red-500">Error: {error}</div>
-            ) : (
-              <ThemeProvider theme={isDarkMode ? alexandriaThemeDark : alexandriaTheme}>
-                    {viewMode === 'document' ? (
-                  <div className="h-full overflow-y-auto overflow-x-hidden">
-                    <IndustryMarkdownSlide
-                      content={markdownContent}
-                      slideIdPrefix="view"
-                      slideIndex={0}
-                      fontSizeScale={fontScale}
-                    />
+            <>
+              {/* Loading overlay with skeleton */}
+              <div className={`absolute inset-0 bg-background transition-opacity duration-300 z-10 ${
+                loading ? 'opacity-100' : 'opacity-0 pointer-events-none'
+              }`}>
+                <div className="p-8 space-y-4">
+                  <div className="h-8 bg-muted/30 rounded w-3/4 animate-pulse" />
+                  <div className="space-y-3">
+                    <div className="h-4 bg-muted/20 rounded w-full animate-pulse" />
+                    <div className="h-4 bg-muted/20 rounded w-5/6 animate-pulse" />
+                    <div className="h-4 bg-muted/20 rounded w-4/6 animate-pulse" />
                   </div>
+                  <div className="space-y-3 pt-4">
+                    <div className="h-4 bg-muted/20 rounded w-full animate-pulse" />
+                    <div className="h-4 bg-muted/20 rounded w-full animate-pulse" />
+                    <div className="h-4 bg-muted/20 rounded w-3/4 animate-pulse" />
+                  </div>
+                </div>
+              </div>
+              
+              {/* Error state */}
+              {error && (
+                <div className="p-8 text-red-500">Error: {error}</div>
+              )}
+              
+              {/* Content with fade-in */}
+              {!error && (
+                <div className={`h-full transition-opacity duration-500 ${
+                  loading ? 'opacity-0' : 'opacity-100'
+                }`}>
+                  <ThemeProvider theme={isDarkMode ? alexandriaThemeDark : alexandriaTheme}>
+                    {viewMode === 'document' ? (
+                      <div className="h-full overflow-y-auto overflow-x-hidden">
+                        <IndustryMarkdownSlide
+                          content={markdownContent}
+                          slideIdPrefix="view"
+                          slideIndex={0}
+                          fontSizeScale={fontScale}
+                        />
+                      </div>
                 ) : (() => {
                   const presentation = parseMarkdownIntoPresentation(markdownContent);
                   const slideContents = presentation.slides.map(slide => slide.location.content);
@@ -440,8 +489,10 @@ export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
                     </div>
                   );
                 })()}
-              </ThemeProvider>
-            )
+                  </ThemeProvider>
+                </div>
+              )}
+            </>
           ) : (
             <EmptyState />
           )}

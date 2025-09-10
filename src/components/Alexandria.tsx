@@ -6,14 +6,20 @@ import { AlexandriaAPI } from '@/lib/alexandria-api';
 import type { Repository } from '@/lib/alexandria-api';
 import { ThemeToggle } from './ThemeToggle';
 import { ProductShowcase } from './ProductShowcase';
-import { Library } from 'lucide-react';
+import { Library, Sparkles } from 'lucide-react';
 
 export function Alexandria() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [repositories, setRepositories] = useState<Repository[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [showLibrary, setShowLibrary] = useState(false);
+  const [showLibrary, setShowLibrary] = useState(() => {
+    // Check if user has previously explored the library
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('hasExploredLibrary') === 'true';
+    }
+    return false;
+  });
 
   // Initialize API client with runtime or environment URL
   const apiUrl = typeof window !== 'undefined' && window.ALEXANDRIA_CONFIG?.apiUrl ? 
@@ -88,6 +94,16 @@ export function Alexandria() {
                   </kbd>
                 </Button>
               )}
+              {showLibrary && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setShowLibrary(false)}
+                  title="Show intro"
+                >
+                  <Sparkles className="h-4 w-4" />
+                </Button>
+              )}
               <ThemeToggle />
             </div>
           </div>
@@ -97,7 +113,11 @@ export function Alexandria() {
       {/* Main Content */}
       <main className="container mx-auto px-6 py-8">
         {!showLibrary ? (
-          <ProductShowcase onShowLibrary={() => setShowLibrary(true)} />
+          <ProductShowcase onShowLibrary={() => {
+            setShowLibrary(true);
+            // Remember that user has explored the library
+            localStorage.setItem('hasExploredLibrary', 'true');
+          }} />
         ) : loading ? (
           <div className="flex justify-center items-center py-12">
             <div className="text-muted-foreground">Loading repositories...</div>
