@@ -100,7 +100,10 @@ To add your repository to Alexandria:
 }
 ```
 
-2. **Register your repository** (coming soon via API)
+2. **View your repository in Alexandria**:
+   - Example: [a24z-memory setup guide](https://a24z-ai.github.io/Alexandria/repo/?owner=a24z-ai&name=a24z-memory&view=setup-guide)
+
+3. **Register your repository** (coming soon via API)
 
 See [GitHub Integration Guide](./docs/GITHUB_INTEGRATION.md) for detailed instructions.
 
