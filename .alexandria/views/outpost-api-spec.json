@@ -29,6 +29,7 @@
   },
   "overviewPath": "docs/OUTPOST_API_SPEC.md",
   "category": "other",
+  "displayOrder": 3,
   "timestamp": "2025-09-09T03:48:15.718Z",
   "metadata": {
     "generationType": "user",

@@ -1,7 +1,10 @@
 
+# Ensure we use the correct alexandria version
+export PATH="/opt/homebrew/bin:$PATH"
+
 # Alexandria validation
 echo "Running Alexandria validation..."
-npx alexandria validate-all --errors-only || {
+alexandria validate-all --errors-only || {
   echo "❌ Alexandria validation failed (errors found)"
   echo "   Run 'alexandria validate-all' to see details"
   exit 1

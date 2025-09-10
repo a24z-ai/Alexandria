@@ -55,6 +55,7 @@
   },
   "overviewPath": "docs/ALEXANDRIA_OUTPOST.md",
   "category": "other",
+  "displayOrder": 2,
   "timestamp": "2025-09-09T03:36:28.870Z",
   "metadata": {
     "generationType": "user",
