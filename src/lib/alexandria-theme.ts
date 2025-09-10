@@ -70,38 +70,37 @@ export const previewThemeDark: Theme = {
 };
 
 // Alexandria theme that extends the default with our color system (light mode)
-// Using actual hex colors for Mermaid diagram compatibility
+// Soft, non-harsh light theme
 export const alexandriaTheme: Theme = {
   ...defaultTheme,
   colors: {
     ...defaultTheme.colors,
     
-    // Light mode colors - converted from OKLCH to hex
-    text: '#252525',           // oklch(0.145 0 0)
-    background: '#faf9f7',     // oklch(0.98 0.005 45) - warm off-white
-    primary: '#343434',        // oklch(0.205 0 0)
-    secondary: '#f7f7f7',      // oklch(0.97 0 0)
-    accent: '#f7f7f7',         // oklch(0.97 0 0)
-    muted: '#f7f7f7',          // oklch(0.97 0 0)
-    border: '#ebebeb',         // oklch(0.922 0 0)
-    
-    // Surface and background variations
-    surface: '#faf9f7',        // Same as background
-    backgroundSecondary: '#faf9f7',
-    backgroundTertiary: '#f7f7f7',
-    backgroundLight: '#f7f7f7',
-    backgroundHover: '#f7f7f7',
-    
-    // Text variations
-    textSecondary: '#8e8e8e',  // oklch(0.556 0 0)
-    textTertiary: '#8e8e8e',
-    textMuted: '#8e8e8e',
-    
-    // Semantic colors
-    error: '#ef4444',          // oklch(0.577 0.245 27.325) - red
-    warning: '#f59e0b',        // amber
-    success: '#10b981',        // emerald
-    info: '#3b82f6',           // blue
+    // Base colors - soft light theme
+    text: '#2d2d2d',           // Dark gray, not black
+    background: '#fafaf9',     // Soft off-white with warmth
+    primary: '#4a5fc1',        // Soft blue
+    secondary: '#f3f3f2',      // Light gray
+    accent: '#f3f3f2',         // Light accent
+    highlight: 'rgba(74, 95, 193, 0.1)', // Light blue highlight
+    muted: '#e8e8e7',          // Muted background
+
+    // Status colors
+    success: '#10b981',        // Green
+    warning: '#f59e0b',        // Amber
+    error: '#ef4444',          // Red
+    info: '#3b82f6',           // Blue
+
+    // Additional semantic colors
+    border: '#e5e5e4',         // Soft border
+    backgroundSecondary: '#f5f5f4',  // Slightly darker than background
+    backgroundTertiary: '#ededec',   // Even darker
+    backgroundLight: '#ffffff',      // Pure white for contrast
+    backgroundHover: '#f0f0ef',      // Hover state
+    surface: '#ffffff',        // White surface
+    textSecondary: '#71717a',  // Secondary text
+    textTertiary: '#a1a1aa',   // Tertiary text
+    textMuted: '#a1a1aa',      // Muted text
   },
 };
 
