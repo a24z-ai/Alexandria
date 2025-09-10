@@ -9,6 +9,12 @@ interface RepositoryCardProps {
 }
 
 export function RepositoryCard({ repository, onSelect }: RepositoryCardProps) {
+  // Extract GitHub metadata from the nested github field
+  const githubData = repository.github;
+  const stars = githubData?.stars || 0;
+  const owner = githubData?.owner || 'unknown';
+  const description = githubData?.description;
+  
   return (
     <div 
       className="group relative cursor-pointer h-[420px]"
@@ -24,11 +30,11 @@ export function RepositoryCard({ repository, onSelect }: RepositoryCardProps) {
           <div className="absolute top-4 bottom-4 right-1 w-0.5 bg-gray-600 dark:bg-gray-900"></div>
           
           {/* Stars indicator on spine */}
-          {repository.stars > 100 && (
+          {stars > 100 && (
             <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center">
               <Star className="h-3 w-3 text-yellow-500 fill-yellow-500" />
               <div className="text-[8px] text-yellow-500 font-bold mt-0.5">
-                {repository.stars >= 1000 ? `${(repository.stars / 1000).toFixed(0)}k` : repository.stars}
+                {stars >= 1000 ? `${(stars / 1000).toFixed(0)}k` : stars}
               </div>
             </div>
           )}
@@ -46,31 +52,31 @@ export function RepositoryCard({ repository, onSelect }: RepositoryCardProps) {
             <div className="space-y-3">
               <div className="text-center">
                 <CardTitle className="text-xl font-bold leading-tight line-clamp-2">{repository.name}</CardTitle>
-                <p className="text-sm text-muted-foreground mt-2 italic">by {repository.owner}</p>
+                <p className="text-sm text-muted-foreground mt-2 italic">by {owner}</p>
               </div>
-              {repository.description && (
+              {description && (
                 <CardDescription className="text-sm leading-relaxed line-clamp-4 mt-4 text-center">
-                  {repository.description}
+                  {description}
                 </CardDescription>
               )}
             </div>
           </CardHeader>
           
           <CardContent className="px-6 pb-6 space-y-3">
-            {repository.tags && repository.tags.length > 0 && (
+            {githubData?.topics && githubData.topics.length > 0 && (
               <div className="flex gap-1.5 flex-wrap">
-                {repository.tags.slice(0, 4).map(tag => (
-                  <Badge key={tag} variant="secondary" className="text-xs">{tag}</Badge>
+                {githubData.topics.slice(0, 4).map(topic => (
+                  <Badge key={topic} variant="secondary" className="text-xs">{topic}</Badge>
                 ))}
-                {repository.tags.length > 4 && (
-                  <Badge variant="outline" className="text-xs">+{repository.tags.length - 4}</Badge>
+                {githubData.topics.length > 4 && (
+                  <Badge variant="outline" className="text-xs">+{githubData.topics.length - 4}</Badge>
                 )}
               </div>
             )}
-            {repository.metadata?.license && (
+            {githubData?.license && (
               <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                 <Scale className="h-3 w-3" />
-                <span>{repository.metadata.license}</span>
+                <span>{githubData.license}</span>
               </div>
             )}
           </CardContent>

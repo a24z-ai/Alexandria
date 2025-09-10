@@ -3,35 +3,15 @@
  * Handles all communication with the Alexandria backend API
  */
 
-import type { CodebaseViewSummary } from 'a24z-memory';
+import type { 
+  AlexandriaRepository,
+  AlexandriaRepositoryRegistry 
+} from 'a24z-memory/dist/pure-core/types/repository';
+import type { CodebaseViewSummary } from 'a24z-memory/dist/pure-core/types/summary';
 
-export interface Repository {
-  id: string;
-  owner: string;
-  name: string;
-  description: string;
-  stars: number;
-  hasViews: boolean;
-  viewCount: number;
-  views: CodebaseViewSummary[];
-  lastUpdated: string;
-  tags?: string[];
-  metadata?: {
-    primaryLanguage?: string | null;
-    topics?: string[];
-    license?: string | null;
-    lastCommit?: string | null;
-    defaultBranch?: string;
-  };
-  registeredAt?: string;
-  lastChecked?: string;
-}
-
-export interface RepositoriesResponse {
-  repositories: Repository[];
-  total: number;
-  lastUpdated: string;
-}
+// Export the standardized types for use in components
+export type { AlexandriaRepository as Repository };
+export type { AlexandriaRepositoryRegistry as RepositoriesResponse };
 
 export interface RegisterRepositoryRequest {
   owner: string;
@@ -82,7 +62,7 @@ export class AlexandriaAPI {
   /**
    * Fetch all registered repositories
    */
-  async getRepositories(): Promise<RepositoriesResponse> {
+  async getRepositories(): Promise<AlexandriaRepositoryRegistry> {
     const response = await fetch(`${this.baseUrl}/api/alexandria/repos`, {
       method: 'GET',
       headers: this.headers,
@@ -100,7 +80,7 @@ export class AlexandriaAPI {
   /**
    * Fetch a specific repository by owner and name
    */
-  async getRepository(owner: string, name: string): Promise<Repository> {
+  async getRepository(owner: string, name: string): Promise<AlexandriaRepository> {
     const response = await fetch(`${this.baseUrl}/api/alexandria/repos/${owner}/${name}`, {
       method: 'GET',
       headers: this.headers,
@@ -159,7 +139,7 @@ export class AlexandriaAPI {
     tags?: string[];
     hasViews?: boolean;
     language?: string;
-  }): Promise<RepositoriesResponse> {
+  }): Promise<AlexandriaRepositoryRegistry> {
     const params = new URLSearchParams({ q: query });
     
     if (filters?.tags?.length) {
@@ -188,7 +168,7 @@ export class AlexandriaAPI {
   /**
    * Refresh repository data from GitHub
    */
-  async refreshRepository(owner: string, name: string): Promise<Repository> {
+  async refreshRepository(owner: string, name: string): Promise<AlexandriaRepository> {
     const response = await fetch(`${this.baseUrl}/api/alexandria/repos/${owner}/${name}/refresh`, {
       method: 'POST',
       headers: this.headers,
