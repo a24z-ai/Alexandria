@@ -33,7 +33,7 @@ The package is defined in `package-outpost.json` with the built assets stored in
 API configuration is implemented across multiple components:
 - `src/components/Alexandria.tsx` - Main component with runtime config check
 - `src/components/RepositoryViewer.tsx` - Repository viewer with API config
-- `src/components/ViewDisplay.tsx` - Document viewer with API config
+- `src/components/ViewDisplay.tsx` - Document viewer with API config and GitHub repository button
 - `scripts/build-server.js` - Builds the server that injects config
 
 The API endpoint is configurable at runtime without rebuilding:

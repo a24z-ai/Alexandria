@@ -22,8 +22,8 @@ The Memory Palace local server needs to implement these endpoints to support Ale
 ```typescript
 GET /api/alexandria/repos
 
-Response: {
-  repositories: Repository[],
+Response: AlexandriaRepositoryRegistry {
+  repositories: AlexandriaRepository[],
   total: number,
   lastUpdated: string
 }
@@ -33,7 +33,7 @@ Response: {
 ```typescript
 GET /api/alexandria/repos/:owner/:name
 
-Response: Repository
+Response: AlexandriaRepository
 ```
 
 ### 3. Register Repository (Optional)
@@ -70,9 +70,20 @@ Response: Raw markdown content (text/plain)
 
 ## Type Definitions
 
-### Repository
+The Alexandria Outpost uses standardized types from the `a24z-memory` package for consistency across the ecosystem.
+
+### Importing Types
 ```typescript
-interface Repository {
+import type { 
+  AlexandriaRepository,
+  AlexandriaRepositoryRegistry 
+} from 'a24z-memory/dist/pure-core/types/repository';
+import type { CodebaseViewSummary } from 'a24z-memory/dist/pure-core/types/summary';
+```
+
+### Repository (AlexandriaRepository)
+```typescript
+interface AlexandriaRepository {
   id: string;                      // Used for React keys
   owner: string;                   // Displayed and used for navigation
   name: string;                    // Displayed and used for navigation
@@ -106,6 +117,12 @@ interface CodebaseViewSummary {
 ```
 
 ## Local Implementation Guide
+
+### Package Installation
+To use the standardized types in your Memory Palace implementation:
+```bash
+npm install a24z-memory
+```
 
 ### File System Structure
 The Memory Palace server should scan for repositories with `.a24z` folders:

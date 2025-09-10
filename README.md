@@ -14,6 +14,7 @@ Alexandria is a centralized platform for discovering and browsing a24z-memory do
 - 🔗 **Shareable URLs** - Direct links to specific repository documentation
 - ⚡ **Fast & Static** - Built with Astro and deployed on GitHub Pages
 - 🎨 **Beautiful UI** - Modern interface with shadcn/ui components
+- 🔗 **GitHub Integration** - Quick access to source repositories via GitHub button in viewer
 
 ## Project Structure
 

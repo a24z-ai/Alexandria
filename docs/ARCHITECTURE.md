@@ -88,6 +88,7 @@ Document viewer that:
 - Fetches and renders markdown content from GitHub
 - Provides collapsible sidebar with persistent state
 - Custom markdown rendering with syntax highlighting
+- Quick access GitHub button to view source repository
 
 ### 2. Data Layer
 
