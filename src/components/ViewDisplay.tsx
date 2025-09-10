@@ -8,7 +8,7 @@ import { ThemeToggle } from './ThemeToggle';
 import { FontScaleControls } from './FontScaleControls';
 import { EmptyState } from './EmptyState';
 import { AnimatedBookIcon } from './AnimatedBookIcon';
-import { BookOpen, Link2, Check, Presentation, FileText, Menu, X } from 'lucide-react';
+import { BookOpen, Link2, Check, Presentation, FileText, Menu, X, Github } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { IndustryMarkdownSlide, SlidePresentation, ThemeProvider, parseMarkdownIntoPresentation } from 'themed-markdown';
 import 'themed-markdown/dist/index.css';
@@ -294,6 +294,15 @@ export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
           </div>
         </div>
         <div className="flex items-center gap-1 md:gap-2">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => window.open(`https://github.com/${manifest.repository}`, '_blank')}
+            title="View on GitHub"
+            className="h-9 w-9 md:h-10 md:w-10"
+          >
+            <Github className="h-4 w-4" />
+          </Button>
           {selectedView && selectedView.overviewPath && (
             <>
               <Button
