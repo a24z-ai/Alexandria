@@ -25,7 +25,7 @@ import open from 'open';
 program
   .name('alexandria-outpost')
   .description('Local UI for browsing Alexandria repository documentation')
-  .version('0.1.0');
+  .version('0.1.6');
 
 program
   .command('serve')
@@ -60,6 +60,7 @@ fs.writeFileSync(path.join(distDir, 'cli.js'), cliContent);
 // Create the server module
 const serverContent = `import express from 'express';
 import path from 'path';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -67,23 +68,54 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 export async function startServer({ port = 3003, apiUrl = 'https://git-gallery.com' }) {
   const app = express();
   
-  // Inject configuration into the HTML
-  app.use((req, res, next) => {
-    if (req.path === '/' || req.path.endsWith('.html')) {
-      // Set API URL as a global variable for the frontend
-      res.locals.apiUrl = apiUrl;
-    }
-    next();
+  const publicPath = path.join(__dirname, '..', 'outpost-dist');
+  
+  // Handle HTML files with configuration injection BEFORE static middleware
+  app.get(['/', '/index.html'], (req, res) => {
+    const indexPath = path.join(publicPath, 'index.html');
+    let html = fs.readFileSync(indexPath, 'utf-8');
+    
+    // Inject the API URL into the HTML
+    const configScript = \`
+      <script>
+        window.ALEXANDRIA_CONFIG = {
+          apiUrl: '\${apiUrl}'
+        };
+      </script>
+    \`;
+    
+    html = html.replace('</head>', \`\${configScript}</head>\`);
+    res.send(html);
   });
   
-  // Serve static files from the Astro build
-  const publicPath = path.join(__dirname, '..', 'outpost-dist');
-  app.use(express.static(publicPath));
+  // Handle repo page separately
+  app.get(['/repo', '/repo/index.html'], (req, res) => {
+    const repoPath = path.join(publicPath, 'repo', 'index.html');
+    let html = fs.readFileSync(repoPath, 'utf-8');
+    
+    // Inject the API URL into the HTML
+    const configScript = \`
+      <script>
+        window.ALEXANDRIA_CONFIG = {
+          apiUrl: '\${apiUrl}'
+        };
+      </script>
+    \`;
+    
+    html = html.replace('</head>', \`\${configScript}</head>\`);
+    res.send(html);
+  });
   
-  // Fallback to index.html for client-side routing
-  app.get('*', (req, res) => {
+  // Serve static files (JS, CSS, images, etc.) but NOT HTML files
+  app.use(express.static(publicPath, {
+    index: false,  // Don't serve index.html automatically
+    extensions: ['js', 'css', 'svg', 'png', 'jpg', 'jpeg', 'gif', 'ico', 'json', 'woff', 'woff2', 'ttf', 'eot']
+  }));
+  
+  // Fallback for any other routes (client-side routing)
+  app.use((req, res) => {
     const indexPath = path.join(publicPath, 'index.html');
-    let html = require('fs').readFileSync(indexPath, 'utf-8');
+    let html = fs.readFileSync(indexPath, 'utf-8');
     
     // Inject the API URL into the HTML
     const configScript = \`

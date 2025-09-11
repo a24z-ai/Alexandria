@@ -1,6 +1,6 @@
 {
   "name": "@a24z/alexandria-outpost",
-  "version": "0.1.0",
+  "version": "0.1.6",
   "description": "Local UI for browsing Alexandria repository documentation",
   "type": "module",
   "main": "dist/server.js",

@@ -32,7 +32,10 @@ export function ProductShowcase({ onShowLibrary }: ProductShowcaseProps) {
         <div className="flex flex-col sm:flex-row gap-4 justify-center pt-8">
           <Button 
             size="lg"
-            onClick={() => window.location.href = '/Alexandria/repo/?owner=a24z-ai&name=a24z-memory&view=setup-guide'}
+            onClick={() => {
+              const basePath = window.location.pathname.includes('/Alexandria') ? '/Alexandria' : '';
+              window.location.href = `${basePath}/repo?owner=a24z-ai&name=a24z-memory&view=setup-guide`;
+            }}
           >
             Get Started
             <ArrowRight className="ml-2 h-4 w-4" />
@@ -40,7 +43,10 @@ export function ProductShowcase({ onShowLibrary }: ProductShowcaseProps) {
           <Button 
             variant="outline" 
             size="lg"
-            onClick={() => window.location.href = '/Alexandria/repo/?owner=a24z-ai&name=a24z-memory&view=revenue-strategy'}
+            onClick={() => {
+              const basePath = window.location.pathname.includes('/Alexandria') ? '/Alexandria' : '';
+              window.location.href = `${basePath}/repo?owner=a24z-ai&name=a24z-memory&view=revenue-strategy`;
+            }}
           >
             Roadmap
           </Button>

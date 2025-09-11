@@ -1,0 +1,35 @@
+{
+  "id": "alexandria-outpost-guide",
+  "version": "1.0.0",
+  "name": "alexandria-outpost-guide",
+  "description": "User guide for installing and using Alexandria Outpost npm package",
+  "rows": 1,
+  "cols": 1,
+  "cells": {
+    "Development": {
+      "coordinates": [
+        0,
+        0
+      ],
+      "files": [
+        "mjs",
+        "js"
+      ],
+      "priority": 0
+    }
+  },
+  "overviewPath": "README-outpost.md",
+  "category": "other",
+  "displayOrder": 0,
+  "timestamp": "2025-09-11T20:14:44.711Z",
+  "metadata": {
+    "generationType": "user",
+    "ui": {
+      "enabled": true,
+      "rows": 1,
+      "cols": 1,
+      "showCellLabels": true,
+      "cellLabelPosition": "top"
+    }
+  }
+}

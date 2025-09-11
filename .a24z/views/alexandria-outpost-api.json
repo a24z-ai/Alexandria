@@ -1,0 +1,44 @@
+{
+  "id": "alexandria-outpost-api",
+  "version": "1.0.0",
+  "name": "alexandria-outpost-api",
+  "description": "API specification for Alexandria Outpost local server",
+  "rows": 1,
+  "cols": 2,
+  "cells": {
+    "File System Structure": {
+      "coordinates": [
+        0,
+        0
+      ],
+      "files": [
+        "json"
+      ],
+      "priority": 0
+    },
+    "Repository Discovery": {
+      "coordinates": [
+        0,
+        1
+      ],
+      "files": [
+        "json"
+      ],
+      "priority": 0
+    }
+  },
+  "overviewPath": "docs/OUTPOST_API_SPEC.md",
+  "category": "other",
+  "displayOrder": 0,
+  "timestamp": "2025-09-11T20:19:18.422Z",
+  "metadata": {
+    "generationType": "user",
+    "ui": {
+      "enabled": true,
+      "rows": 1,
+      "cols": 2,
+      "showCellLabels": true,
+      "cellLabelPosition": "top"
+    }
+  }
+}

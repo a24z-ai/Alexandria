@@ -1,0 +1,67 @@
+{
+  "id": "alexandria-overview",
+  "version": "1.0.0",
+  "name": "alexandria-overview",
+  "description": "Main Alexandria project documentation and setup guide",
+  "rows": 2,
+  "cols": 3,
+  "cells": {
+    "Project Structure": {
+      "coordinates": [
+        0,
+        0
+      ],
+      "files": [
+        "tsx",
+        "md"
+      ],
+      "priority": 0
+    },
+    "Prerequisites": {
+      "coordinates": [
+        0,
+        1
+      ],
+      "files": [
+        "js"
+      ],
+      "priority": 0
+    },
+    "Adding Your Repository": {
+      "coordinates": [
+        0,
+        2
+      ],
+      "files": [
+        "json",
+        "docs/GITHUB_INTEGRATION.md"
+      ],
+      "priority": 0
+    },
+    "Documentation": {
+      "coordinates": [
+        1,
+        0
+      ],
+      "files": [
+        "docs/API_REQUIREMENTS.md",
+        "docs/GITHUB_INTEGRATION.md"
+      ],
+      "priority": 0
+    }
+  },
+  "overviewPath": "README.md",
+  "category": "other",
+  "displayOrder": 0,
+  "timestamp": "2025-09-11T20:14:29.287Z",
+  "metadata": {
+    "generationType": "user",
+    "ui": {
+      "enabled": true,
+      "rows": 2,
+      "cols": 3,
+      "showCellLabels": true,
+      "cellLabelPosition": "top"
+    }
+  }
+}

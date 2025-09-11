@@ -3,7 +3,8 @@ import Layout from '../layouts/Layout.astro';
 import { RepositoryViewer } from '../components/RepositoryViewer';
 
 // Single page that handles all repository views client-side
-const backUrl = '/Alexandria/';
+// Determine backUrl based on the base path configuration
+const backUrl = import.meta.env.BASE_URL || '/';
 ---
 
 <Layout title="Repository - Alexandria">

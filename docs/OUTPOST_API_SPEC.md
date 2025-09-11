@@ -125,21 +125,21 @@ npm install a24z-memory
 ```
 
 ### File System Structure
-The Memory Palace server should scan for repositories with `.a24z` folders:
+The Memory Palace server should scan for repositories with `.alexandria` folders:
 ```
 ~/repos/
   project-a/
-    .a24z/
+    .alexandria/
       views.json
       views/
         *.json
   project-b/
-    .a24z/
+    .alexandria/
       views.json
 ```
 
 ### Repository Discovery
-1. Scan configured directories for `.a24z` folders
+1. Scan configured directories for `.alexandria` folders
 2. Read `views.json` to get available views
 3. Map to Repository type structure
 4. Cache results for performance

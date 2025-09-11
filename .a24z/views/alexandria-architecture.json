@@ -1,0 +1,64 @@
+{
+  "id": "alexandria-architecture",
+  "version": "1.0.0",
+  "name": "alexandria-architecture",
+  "description": "Core architecture and design documentation for Alexandria",
+  "rows": 2,
+  "cols": 3,
+  "cells": {
+    "1. Frontend Layer (Astro + React)": {
+      "coordinates": [
+        0,
+        0
+      ],
+      "files": [
+        "tsx"
+      ],
+      "priority": 0
+    },
+    "2. Data Layer": {
+      "coordinates": [
+        0,
+        1
+      ],
+      "files": [
+        "ts"
+      ],
+      "priority": 0
+    },
+    "3. Repository Integration": {
+      "coordinates": [
+        0,
+        2
+      ],
+      "files": [
+        "json"
+      ],
+      "priority": 0
+    },
+    "UI/UX Features": {
+      "coordinates": [
+        1,
+        0
+      ],
+      "files": [
+        "js"
+      ],
+      "priority": 0
+    }
+  },
+  "overviewPath": "docs/ARCHITECTURE.md",
+  "category": "other",
+  "displayOrder": 0,
+  "timestamp": "2025-09-11T20:17:49.732Z",
+  "metadata": {
+    "generationType": "user",
+    "ui": {
+      "enabled": true,
+      "rows": 2,
+      "cols": 3,
+      "showCellLabels": true,
+      "cellLabelPosition": "top"
+    }
+  }
+}

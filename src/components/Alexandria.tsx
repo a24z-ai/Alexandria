@@ -50,7 +50,9 @@ export function Alexandria() {
   const handleRepoSelect = (repo: Repository) => {
     // Navigate to the repository page with query params
     const owner = repo.github?.owner || 'unknown';
-    window.location.href = `/Alexandria/repo?owner=${owner}&name=${repo.name}`;
+    // Check if we're in the outpost (local) or production environment
+    const basePath = window.location.pathname.includes('/Alexandria') ? '/Alexandria' : '';
+    window.location.href = `${basePath}/repo?owner=${owner}&name=${repo.name}`;
   };
 
   // Keyboard shortcut for search (only when more than 15 repos)
