@@ -7,37 +7,6 @@
       "exclude": [
         ".alexandria/**"
       ]
-    },
-    "rules": [
-      {
-        "id": "document-organization",
-        "name": "Document Organization",
-        "severity": "warning",
-        "enabled": true,
-        "options": {
-          "documentFolders": ["docs", "documentation", "guides"],
-          "rootExceptions": ["README.md", "LICENSE.md", "CONTRIBUTING.md", "CHANGELOG.md", "AGENTS.md", "README-outpost.md"],
-          "checkNested": true
-        }
-      },
-      {
-        "id": "require-references",
-        "name": "Require View Association",
-        "severity": "error",
-        "enabled": true
-      },
-      {
-        "id": "orphaned-references",
-        "name": "Orphaned References",
-        "severity": "error",
-        "enabled": true
-      },
-      {
-        "id": "stale-references",
-        "name": "Stale Context",
-        "severity": "warning",
-        "enabled": true
-      }
-    ]
+    }
   }
 }
