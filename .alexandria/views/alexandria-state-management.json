@@ -12,7 +12,9 @@
         0
       ],
       "files": [
-        "ts"
+        "src/hooks/useReadingRecords.ts",
+        "src/storage/ReadingRecordManager.ts",
+        "src/types/alexandria-state.ts"
       ],
       "priority": 0
     }

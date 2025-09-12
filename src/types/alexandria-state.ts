@@ -9,6 +9,8 @@
  */
 export interface AlexandriaBookmark {
   id: string;
+  volumeId: string;                  // Repository ID (owner/name) - required for querying
+  chapterId: string;                 // View/document ID - required for querying
   label?: string;                    // User's note about this bookmark
   chapterTitle?: string;             // The section/heading where bookmark was placed
   createdAt: number;                 // When the bookmark was created
@@ -97,6 +99,22 @@ export interface AlexandriaVersionUpdate {
   currentVersion: AlexandriaDocumentVersion;
   changesPreview?: string;           // Brief description of changes
   bookmarksAffected: boolean;        // Whether bookmarks may be outdated
+}
+
+/**
+ * Represents a document that has been bookmarked
+ * Like a book you've marked for later reference in your personal collection
+ */
+export interface AlexandriaBookmarkedDocument {
+  visitId: string;                   // The visit where bookmarks were created
+  volumeId: string;                  // Repository ID (owner/name)
+  chapterId: string;                 // View/document ID
+  title?: string;                    // Document title if available
+  savedAt: Date;                     // When first bookmarked
+  lastVisited: Date;                 // Most recent access
+  bookmarkCount: number;             // Number of bookmarks in this document
+  documentPath?: string;             // Path to the document in the repo
+  documentVersion?: AlexandriaDocumentVersion; // Version info when bookmarked
 }
 
 /**

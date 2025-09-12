@@ -1,86 +1,60 @@
 {
   "id": "alexandria-architecture",
   "version": "1.0.0",
-  "name": "Alexandria Architecture",
-  "description": "Complete architectural overview of the Alexandria documentation platform with system diagrams and component details",
+  "name": "alexandria-architecture",
+  "description": "Core architecture and design documentation for Alexandria",
   "rows": 2,
   "cols": 3,
   "cells": {
-    "Frontend Components": {
+    "1. Frontend Layer (Astro + React)": {
       "coordinates": [
         0,
         0
       ],
       "files": [
         "src/components/Alexandria.tsx",
-        "src/components/RepositoryViewer.tsx",
         "src/components/ViewDisplay.tsx"
       ],
       "priority": 0
     },
-    "API & Data Layer": {
+    "2. Data Layer": {
       "coordinates": [
         0,
         1
       ],
       "files": [
         "src/lib/alexandria-api.ts",
-        "src/data/mockData.ts"
+        "src/types/alexandria-state.ts"
       ],
       "priority": 0
     },
-    "Pages & Routing": {
+    "3. Repository Integration": {
       "coordinates": [
         0,
         2
       ],
       "files": [
-        "src/pages/index.astro",
-        "src/pages/repo.astro"
+        "package.json",
+        "tsconfig.json"
       ],
       "priority": 0
     },
-    "UI Components": {
+    "UI/UX Features": {
       "coordinates": [
         1,
         0
       ],
       "files": [
         "src/components/ui/card.tsx",
-        "src/components/ui/tabs.tsx",
-        "src/components/ui/command.tsx"
-      ],
-      "priority": 0
-    },
-    "Supporting Components": {
-      "coordinates": [
-        1,
-        1
-      ],
-      "files": [
-        "src/components/RepositoryCard.tsx",
-        "src/components/ThemeToggle.tsx",
-        "src/components/EmptyState.tsx"
-      ],
-      "priority": 0
-    },
-    "Configuration": {
-      "coordinates": [
-        1,
-        2
-      ],
-      "files": [
-        "package.json",
-        "astro.config.mjs",
-        "tsconfig.json"
+        "src/components/ui/tabs.tsx"
       ],
       "priority": 0
     }
   },
   "overviewPath": "docs/ARCHITECTURE.md",
   "category": "other",
-  "displayOrder": 4,
-  "timestamp": "2025-09-08T17:24:43.909Z",
+  "displayOrder": 0,
+  "timestamp": "2025-09-11T20:17:49.732Z",
   "metadata": {
     "generationType": "user",
     "ui": {

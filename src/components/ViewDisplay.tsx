@@ -8,8 +8,9 @@ import { ThemeToggle } from './ThemeToggle';
 import { FontScaleControls } from './FontScaleControls';
 import { EmptyState } from './EmptyState';
 import { AnimatedBookIcon } from './AnimatedBookIcon';
-import { BookOpen, Link2, Check, Presentation, FileText, Menu, X, Github } from 'lucide-react';
+import { BookOpen, Link2, Check, Presentation, FileText, Menu, X, Github, Bookmark } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useReadingRecords } from '@/hooks/useReadingRecords';
 import { IndustryMarkdownSlide, SlidePresentation, ThemeProvider, parseMarkdownIntoPresentation } from 'themed-markdown';
 import 'themed-markdown/dist/index.css';
 import { alexandriaTheme, alexandriaThemeDark } from '@/lib/alexandria-theme';
@@ -40,6 +41,8 @@ export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
   const [error, setError] = useState<string | null>(null);
   const [fontScale, setFontScale] = useState<number>(1);
   const [copied, setCopied] = useState(false);
+  const [bookmarkSaved, setBookmarkSaved] = useState(false);
+  const [isBookmarked, setIsBookmarked] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(() => {
     // Check if dark mode is enabled
     return document.documentElement.className === 'dark';
@@ -67,6 +70,16 @@ export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
     }
     return false;
   });
+  
+  // Initialize reading records hook
+  const {
+    isInitialized,
+    startReading,
+    saveBookmark,
+    removeBookmark,
+    bookmarks,
+    currentVisit
+  } = useReadingRecords();
   
   // Check URL for view parameter on mount
   useEffect(() => {
@@ -183,6 +196,15 @@ export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
           // Fetch markdown content from GitHub via API or directly
           const content = await api.getViewContent(owner, name, selectedView.overviewPath);
           setMarkdownContent(content);
+          
+          // Start reading session when view is loaded
+          if (isInitialized && selectedView) {
+            await startReading(
+              manifest.repository,
+              selectedView.id,
+              selectedView.name
+            );
+          }
         } catch {
           setError('Failed to load view content');
         } finally {
@@ -192,7 +214,13 @@ export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
       
       fetchContent();
     }
-  }, [selectedView, manifest.repository, api]);
+  }, [selectedView, manifest.repository, api, isInitialized, startReading]);
+
+  // Update bookmark state when bookmarks change
+  useEffect(() => {
+    console.log('Bookmarks updated:', bookmarks);
+    setIsBookmarked(bookmarks.length > 0);
+  }, [bookmarks]);
 
   const copyMarkdownLink = () => {
     if (selectedView && selectedView.overviewPath) {
@@ -204,6 +232,26 @@ export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
       });
+    }
+  };
+
+  const handleSaveBookmark = async () => {
+    if (!selectedView || !isInitialized) return;
+    
+    // If already bookmarked, remove the bookmark
+    if (isBookmarked && bookmarks.length > 0) {
+      // Remove the first bookmark (or implement logic to remove all)
+      await removeBookmark(bookmarks[0].id);
+      setIsBookmarked(false);
+      setBookmarkSaved(false);
+    } else {
+      // Create a new bookmark
+      const bookmark = await saveBookmark(selectedView.name);
+      if (bookmark) {
+        setBookmarkSaved(true);
+        setIsBookmarked(true);
+        setTimeout(() => setBookmarkSaved(false), 2000);
+      }
     }
   };
 
@@ -330,6 +378,16 @@ export function ViewDisplay({ manifest, onBack, backUrl }: ViewDisplayProps) {
                 ) : (
                   <Link2 className="h-4 w-4" />
                 )}
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleSaveBookmark}
+                title={bookmarkSaved || isBookmarked ? "Bookmarked!" : "Bookmark this document"}
+                className={`h-9 w-9 md:h-10 md:w-10 ${bookmarkSaved || isBookmarked ? 'text-primary' : ''}`}
+                disabled={!isInitialized}
+              >
+                <Bookmark className={`h-4 w-4 ${bookmarkSaved || isBookmarked ? 'fill-current' : ''}`} />
               </Button>
             </>
           )}

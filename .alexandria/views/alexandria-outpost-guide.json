@@ -12,8 +12,8 @@
         0
       ],
       "files": [
-        "mjs",
-        "js"
+        "astro.config.mjs",
+        "package.json"
       ],
       "priority": 0
     }

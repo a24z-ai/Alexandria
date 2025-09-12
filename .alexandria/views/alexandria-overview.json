@@ -12,8 +12,8 @@
         0
       ],
       "files": [
-        "tsx",
-        "md"
+        "src/components/Alexandria.tsx",
+        "README.md"
       ],
       "priority": 0
     },
@@ -23,7 +23,7 @@
         1
       ],
       "files": [
-        "js"
+        "package.json"
       ],
       "priority": 0
     },
@@ -33,7 +33,7 @@
         2
       ],
       "files": [
-        "json",
+        "package.json",
         "docs/GITHUB_INTEGRATION.md"
       ],
       "priority": 0

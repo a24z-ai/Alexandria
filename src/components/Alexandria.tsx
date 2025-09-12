@@ -6,6 +6,7 @@ import { AlexandriaAPI } from '@/lib/alexandria-api';
 import type { Repository } from '@/lib/alexandria-api';
 import { ThemeToggle } from './ThemeToggle';
 import { ProductShowcase } from './ProductShowcase';
+import { BookmarkedDocuments } from './BookmarkedDocuments';
 import { Library, Sparkles } from 'lucide-react';
 
 export function Alexandria() {
@@ -138,15 +139,24 @@ export function Alexandria() {
           </div>
         ) : (
           <>
+            {/* Bookmarked Documents Section - only renders if there are bookmarks */}
+            <BookmarkedDocuments className="mb-8" />
+            
             {/* Repository Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {repositories.map(repo => (
-                <RepositoryCard
-                  key={`${repo.github?.owner || 'unknown'}/${repo.name}`}
-                  repository={repo}
-                  onSelect={handleRepoSelect}
-                />
-              ))}
+            <div>
+              <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                <Library className="h-5 w-5" />
+                Explore Repositories
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {repositories.map(repo => (
+                  <RepositoryCard
+                    key={`${repo.github?.owner || 'unknown'}/${repo.name}`}
+                    repository={repo}
+                    onSelect={handleRepoSelect}
+                  />
+                ))}
+              </div>
             </div>
           </>
         )}
